@@ -1,14 +1,14 @@
 /** @format */
 
 import ScoreChart from './ScoreChart';
-import Settings from './Settings';
+// import Settings from './Settings';
 import StudentBoard from './StudentBoard';
 import View from './View';
 
 function App() {
 	return (
 		<div className=''>
-			<Settings />
+			{/* <Settings /> */}
 			{/* <Notification /> */}
 			<View for='student'>
 				<StudentBoard />
