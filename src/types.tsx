@@ -1,12 +1,10 @@
 /** @format */
 
 export type Level = {
-	range: number[];
 	name: string;
 	// reward should be object with amount key, points key and img key
-	reward: reward;
 	colors: string[];
-	img: string;
+	badge: string;
 };
 
 export type reward = {
@@ -14,5 +12,21 @@ export type reward = {
 	points: number;
 	img?: string;
 };
+
+export type range = {
+	id: number;
+	upper_limit: number;
+	lower_limit: number;
+	updated: string;
+	percentage: number;
+	exercise: number;
+};
+
+export type submission = {
+	aplus_id: number
+	points: number,
+	_order: number,
+	exercise: number
+}
 
 export type viewer_type = 'student' | 'teacher';

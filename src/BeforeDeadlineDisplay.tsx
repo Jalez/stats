@@ -4,7 +4,7 @@ import ShadowedContainer from './ShadowedContainer';
 import { Level } from './types';
 
 interface BeforeDeadlineDisplayProps {
-	exercise_deadline: Date;
+	exercise_deadline: string;
 	your_best_score: number;
 	all_scores: number[];
 	levels: Record<number, Level>;

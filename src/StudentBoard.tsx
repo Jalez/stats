@@ -1,42 +1,34 @@
 /** @format */
 
-import HighScores from './HighScores';
 import ProgressBar from './ProgressBar';
 import StudentStats from './StudentStats';
-import { Level } from './types';
 import useStore from './zustand/store';
 import background from './assets/background.webp';
-// import LineChart from './General/LineChart';
-// import ScoreHistory from './ScoreHistory';
-// import Reward from './Reward';
+
 import ScoreChart from './ScoreChart';
 import BeforeDeadlineDisplay from './BeforeDeadlineDisplay';
 
 const StudentBoard = () => {
 	const {
-		assignment_name,
-		your_best_score,
 		levels,
-		all_scores,
-		exercise_deadline,
+		your_best_submission,
+		all_submissions,
+		exercise,
+		your_range_details
 	} = useStore((state) => state);
 
+	const exercise_deadline = exercise.deadline; 
+	const assignment_name = exercise.id
+
+	const all_scores = all_submissions.map((submission) => submission.points);
+
 	// find the level where the range contains the student score
-	let levelDetails: Level | undefined;
 
-	for (const [, value] of Object.entries(levels)) {
-		if (
-			value.range[0] <= your_best_score &&
-			value.range[1] >= your_best_score
-		) {
-			levelDetails = value;
-			break;
-		}
-	}
-
-	const exerciseDeadlinePassed = (exercise_deadline: Date) => {
+	
+	const exerciseDeadlinePassed = (exercise_deadline: string) => {
+		const deadline = new Date(exercise_deadline);
 		const now = new Date();
-		return now > exercise_deadline;
+		return now > deadline;
 	};
 
 	return (
@@ -67,7 +59,7 @@ const StudentBoard = () => {
 			{(!exerciseDeadlinePassed(exercise_deadline) && (
 				<BeforeDeadlineDisplay
 					exercise_deadline={exercise_deadline}
-					your_best_score={your_best_score}
+					your_best_score={your_best_submission?.points || 0}
 					all_scores={all_scores}
 					levels={levels}
 				/>
@@ -91,8 +83,8 @@ const StudentBoard = () => {
 								columnGap: '1rem', // space between columns
 							}}>
 							<StudentStats
-								your_best_score={your_best_score}
-								levelDetails={levelDetails || undefined}
+								your_best_score={your_best_submission?.points || 0}
+								rangeDetails={your_range_details || undefined}
 							/>
 							<ProgressBar />
 						</div>
@@ -105,14 +97,14 @@ const StudentBoard = () => {
 					<ScoreHistory />
 					<Reward />
 				</div> */}
-						<div
+						{/* <div
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
 								flex: 2,
 							}}>
 							<HighScores />
-						</div>
+						</div> */}
 
 						<ScoreChart />
 					</div>

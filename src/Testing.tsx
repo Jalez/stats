@@ -1,15 +1,20 @@
 /** @format */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useStore, { useNotificationStore } from './zustand/store';
 import FormGroup from './General/FormGroup';
 const Testing = () => {
-	const { viewer_type, your_best_score, setViewerType, setYourBestScore } =
+	const { changeUser, user_id, viewer_type, your_best_submission, setViewerType, updateSubmission } =
 		useStore((state) => state);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
 	);
 
+	// if(!your_best_submission) return "No submission found with the given id, please change the id to use another submission";
+
+	const your_best_score = your_best_submission?.points || -1;
+
+	const [newUserId, setNewUserId] = useState(user_id);
 	const [newYourBestScore, setNewYourBestScore] = useState(your_best_score);
 	const [testMode, setTestMode] = useState(false);
 
@@ -19,9 +24,31 @@ const Testing = () => {
 		setNotification('TESTING TOOLS: Viewer type updated to ' + viewer_type);
 	};
 
+	const handleUserIdChange = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		changeUser(newUserId);
+		setNotification('TESTING TOOLS: User id updated to ' + newUserId);
+		setNotificationType('info');
+	}
+
+	useEffect(() => {
+		if (your_best_submission) {
+			setNewYourBestScore(your_best_submission.points);
+		}
+	}, [your_best_submission]);
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		setYourBestScore(newYourBestScore);
+		updateSubmission(
+				{
+					points: newYourBestScore,
+					aplus_id: user_id,
+					exercise: 0,
+					_order: 0,
+				}
+				
+				)
+
 		setNotification('TESTING TOOLS: State updated');
 		setNotificationType('info');
 	};
@@ -41,12 +68,43 @@ const Testing = () => {
 					{/* Teacher or Student */}
 					{testMode ? 'Student' : 'Teacher'}
 				</label>
-			</div>
+				{/* Add a user_id input changer */}
+						</div>
+				<form onSubmit={handleUserIdChange}
+				className='form-inline container'
+				>
+
+
+{/* create a legend titled "Change user for this section" */}
+<fieldset
+className='bg-light text-dark mb-3 p-5'
+>
+
+<legend className='
+'>Changing the user</legend>
+
+<div className='row'>
+					<FormGroup label='User id' id='userId'>
+
+						<input
+							type='number'
+							className='form-control'
+							placeholder='User id'
+							value={newUserId}
+							onChange={(e) => {
+								setNewUserId(parseInt(e.target.value));
+								setNotification('');
+							}}
+							/>
+					</FormGroup>
+						<button	className='btn btn-primary'>Change user</button>
+							</div>
+					</fieldset>
+				</form>
 
 			<form onSubmit={handleSubmit}>
-				<FormGroup label='Your Best Score' id='yourBestScore'>
+				<FormGroup label='Score' id='yourBestScore'>
 					<input
-						disabled={!testMode}
 						id='yourBestScore'
 						type='number'
 						className='form-control'
@@ -58,10 +116,13 @@ const Testing = () => {
 						}}
 					/>
 				</FormGroup>
-				<button disabled={!testMode}>Update test state</button>
+				<button
+				className='btn btn-primary'
+				>Update test state</button>
 			</form>
 		</>
 	);
 };
 
 export default Testing;
+

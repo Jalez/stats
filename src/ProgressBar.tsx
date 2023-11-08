@@ -3,7 +3,7 @@
 import './ProgressBar.css';
 
 import styled, { keyframes } from 'styled-components';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, useEffect } from 'react';
 import useStore, { useNotificationStore } from './zustand/store';
 import { Level } from './types';
 import ShadowedContainer from './ShadowedContainer';
@@ -34,52 +34,77 @@ const RotatingSpan = styled.span<RotatingSpanProps>`
 `;
 
 const ProgressBar = () => {
-	const viewer_type = useStore((state) => state.viewer_type);
-	const student_score = useStore((state) => state.your_best_score);
-	const scores = useStore((state) => state.all_scores);
+	const student_score = useStore((state 
+		) => state.your_best_submission?.points || 0);
+	const all_submissions = useStore((state) => state.all_submissions);
+	const your_range_details = useStore((state) => state.your_range_details);
+	const scores = all_submissions.map((submission) => submission.points);
 	const levels: Record<number, Level> = useStore((state) => state.levels);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
 	);
+	const lower_is_better = useStore((state) => state.lower_is_better);
 
-	// Hide the progress bar if there are no scores
-	if (scores.length === 0) {
-		setNotification(
-			"Your position can't be estimated yet because there are no other scores available at this time."
-		);
-		setNotificationType('info');
+    useEffect(() => {
+        if (scores.length === 0) {
+			console.log("No scores found")
+            setNotification(
+                "Your position can't be estimated yet because there are no other scores available at this time."
+            );
+            setNotificationType('info');
+        } else if (!student_score) {
+			console.log("No student score found")
+            setNotification(
+				"Your position can't be estimated yet because there are no scores available at this time."
+			);
+			setNotificationType('info');
+        } else if (!your_range_details) {
+			console.log("No range details found")
+            setNotification(
+                "Your position can't be estimated yet because there are no range details available at this time."
+            );
+            setNotificationType('info');
+        }
+    }, [student_score, your_range_details]);
+
+
+
+
+
+	if(!student_score){
 		return null;
 	}
 
 	// Hide the progress bar if the viewer is a teacher
-	if (viewer_type === 'teacher') {
-		return null;
-	}
+	// if (viewer_type === 'teacher') {
+	// 	return null;
+	// }
 
 	// Look for the level where the range contains the student score
-	let levelKey = 0;
-	let levelDetails: Level | undefined;
-	for (const [key, value] of Object.entries(levels)) {
-		if (value.range[0] <= student_score && value.range[1] >= student_score) {
-			levelKey = parseInt(key);
-			levelDetails = value;
-			break;
-		}
+	
+
+	if (!your_range_details) {
+		return null;
 	}
+		
+	let levelDetails: Level | undefined;
+	levelDetails = levels[your_range_details.id];
 
-	// get the next levels min score and set it as the max score
-	const nextLevel = levels[levelKey + 1];
-	console.log(levelDetails);
 
-	const minScore = levelDetails?.range[0] || 0;
-	const maxScore = nextLevel?.range[0] || levelDetails?.range[1] || 0;
 
-	const range = maxScore - minScore;
+	const minScore = your_range_details.lower_limit || 0;
+	const maxScore = your_range_details.upper_limit || 0;
 
-	const progress = student_score - minScore;
+	const range = lower_is_better ? your_range_details.lower_limit - your_range_details.upper_limit :
+	your_range_details.upper_limit - your_range_details.lower_limit;
+
+	const progress = lower_is_better?  minScore - student_score : student_score - minScore;
+	// make positive
+
+	
+
 
 	const percentage = (progress / range) * 100;
-	console.log(percentage);
 
 	const leftSideProgress = percentage > 50 ? percentage - 50 : 0;
 	const rightSideProgress = percentage > 50 ? 50 : percentage;
@@ -87,12 +112,16 @@ const ProgressBar = () => {
 	const LeftSideProgressToDegrees = (leftSideProgress / 50) * 180;
 	const RightSideProgressToDegrees = (rightSideProgress / 50) * 180;
 
-	console.log(LeftSideProgressToDegrees, RightSideProgressToDegrees);
+	console.log("Left side progress: ", LeftSideProgressToDegrees)
+	console.log("Right side progress: ", RightSideProgressToDegrees)
+
+		
+
 	return (
 		<ShadowedContainer>
 			<h2>Progress</h2>
 			<div
-				className='col-md-3 col-sm-6'
+				// className='col-md-3 col-sm-6'
 				style={{
 					display: 'flex',
 					flexDirection: 'column',
@@ -123,18 +152,15 @@ const ProgressBar = () => {
 					</span>
 					<div className='progress-value'>
 						<img
-							src={levelDetails?.img}
+							src={levelDetails?.badge}
 							alt='level 4'
 							width={140}
+							height={140}
 							style={{
 								position: 'absolute',
-								// left: '90%',
-								transform: 'translateX(-50%) translateY(-00%)',
+								transform: 'translateX(-50%) translateY(-01%)',
 								zIndex: 1,
 
-								// top: '10px',
-								// height: '25px',
-								// // width: '25px',
 							}}
 						/>
 					</div>
@@ -145,14 +171,26 @@ const ProgressBar = () => {
 				style={{
 					fontSize: '1.2rem',
 					fontWeight: 'bold',
-					// top: '25px',
 				}}>
-				{student_score}/{maxScore}
+					<p>
+
+					Next level at: {lower_is_better ? your_range_details.upper_limit : your_range_details.lower_limit || 0}
+					</p>
+					<p>
+					Your current score: {student_score}
+					</p>
+				 {/* - {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0} */}
 			</span>
 			<span>
 				{' '}
-				You need {maxScore - student_score} more point
-				{maxScore - student_score === 1 ? ' ' : 's '}
+				You need <strong>{
+					lower_is_better ? 
+				student_score - your_range_details.upper_limit 
+					: your_range_details.lower_limit - student_score
+				} </strong>
+				{lower_is_better ? ' less ' : ' more '}
+				 score
+
 				to level up.
 			</span>
 			<div>

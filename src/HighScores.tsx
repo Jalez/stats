@@ -8,22 +8,25 @@ import useStore from './zustand/store';
 import crown from './assets/crown.svg';
 
 const HighScores = () => {
-	const { all_scores, your_best_score } = useStore((state) => state);
+	const { all_submissions, your_best_submission,  } = useStore((state) => state);
 
-	const sortedScores = all_scores.sort((a, b) => b - a);
+	const all_points = all_submissions.map((submission) => submission.points);
+	const sortedScores = all_points.sort((a, b) => b - a);
 
-	const yourPosition = sortedScores.indexOf(your_best_score) + 1;
+	if(!your_best_submission) return "No submission found, please submit your solution to see your position";
+
+	const yourPosition = sortedScores.indexOf(your_best_submission?.points) + 1;
 
 	return (
 		<ShadowedContainer>
 			<img src={crown} alt='crown' width={30} />
 			<h2>High Scores</h2>
-			<p>Your best score: {your_best_score}</p>
+			<p>Your best score: {your_best_submission.points}</p>
 			<p>Position: {yourPosition}</p>
 
 			{/* Create a striped table of them */}
 			<table
-				className='table table-striped table-hover table-sm text-center table-responsive'
+				className='table table-striped table-hover text-center'
 				style={{
 					marginLeft: 'auto',
 					marginRight: 'auto',
@@ -41,18 +44,18 @@ const HighScores = () => {
 								<td
 									style={{
 										// bolden if it's your score
-										fontWeight: score === your_best_score ? 'bold' : 'normal',
+										fontWeight: score === your_best_submission.points ? 'bold' : 'normal',
 										// Make bigger if it's your score
-										fontSize: score === your_best_score ? '1.3rem' : '1rem',
+										fontSize: score === your_best_submission.points ? '1.3rem' : '1rem',
 									}}>
 									{index + 1}
 								</td>
 								<td
 									style={{
 										// bolden if it's your score
-										fontWeight: score === your_best_score ? 'bold' : 'normal',
+										fontWeight: score === your_best_submission.points ? 'bold' : 'normal',
 										// Make bigger if it's your score
-										fontSize: score === your_best_score ? '1.3rem' : '1rem',
+										fontSize: score === your_best_submission.points ? '1.3rem' : '1rem',
 									}}>
 									{score}
 								</td>
@@ -83,7 +86,7 @@ const HighScores = () => {
 									// Make bigger if it's your score
 									fontSize: '1.3rem',
 								}}>
-								{your_best_score}
+								{your_best_submission.points}
 							</td>
 						</tr>
 					)}

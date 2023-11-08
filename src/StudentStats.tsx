@@ -1,29 +1,26 @@
 /** @format */
 
 import ShadowedContainer from './ShadowedContainer';
-import { Level } from './types';
+import { range } from './types';
 
 interface StudentStatsProps {
 	your_best_score: number;
-	levelDetails?: Level;
+	rangeDetails?: range;
 }
 
 const StudentStats: React.FC<StudentStatsProps> = ({
 	your_best_score,
-	levelDetails,
+	rangeDetails,
 }) => {
+
 	return (
 		<ShadowedContainer>
 			<h2>General</h2>
-			<p>Best Score: {your_best_score}</p>
-			<p>Level: 1</p>
+			<p>Best Score: {your_best_score == 0 ? "N/A": your_best_score}</p>
+			<p>Level: {rangeDetails?.id || "N/A"}</p>
 			<p>
 				Reward:{' '}
-				<strong>
-					{levelDetails &&
-						levelDetails.reward.amount * levelDetails.reward.points}{' '}
-					points
-				</strong>
+					{rangeDetails && <strong>{(rangeDetails.percentage/100) * 250 + " points"}</strong> || "N/A"}
 			</p>
 		</ShadowedContainer>
 	);

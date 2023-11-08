@@ -1,77 +1,125 @@
-/** @format */
 import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import useStore, { StoreState } from './zustand/store';
-import { Chart as ChartJS, registerables } from 'chart.js';
-ChartJS.register(...registerables);
+import { ChartData, Chart as ChartJS, registerables } from 'chart.js';
 import { Level } from './types';
 import ShadowedContainer from './ShadowedContainer';
 
+ChartJS.register(...registerables);
+
 const ScoreChart: React.FC = () => {
-	const { all_scores, levels } = useStore((state: StoreState) => state);
-	const [data, setData] = useState(processData(levels, all_scores));
+  const { all_submissions, levels, ranges, lower_is_better } = useStore((state: StoreState) => state);
+  const [chartData, setChartData] = useState<ChartData<"bar">>({
+    labels: [],
+    datasets: [],
+  });
 
-	useEffect(() => {
-		setData(processData(levels, all_scores));
-	}, [levels, all_scores]);
+  useEffect(() => {
+    const all_scores = all_submissions.map((submission) => submission.points);
+    setChartData(processData(levels, all_scores, ranges, lower_is_better));
+  }, [levels, all_submissions, ranges, lower_is_better]);
 
-	function processData(levels: Record<number, Level>, all_scores: number[]) {
-		const labels: string[] = [];
-		const data: number[] = [];
-
-		for (const key in levels) {
-			const level = levels[key];
-			const count = all_scores.filter(
-				(score) => score >= level.range[0] && score <= level.range[1]
-			).length;
-
-			labels.push(key);
-			data.push(count);
-		}
-
-		return {
-			labels: labels,
-			datasets: [
-				{
-					label: 'Level 1 - Range 0-2',
-					data: data,
-					backgroundColor: [
-						'#FF6384',
-						'#36A2EB',
-						'#FFCE56',
-						'#4BC0C0',
-						'#9966FF',
-						'#FF9F40',
-					],
-				},
-			],
-			// Since data shows the number of scores in each level, it is always a whole number, so we can set the step size to 1 and remove the decimals from the y axis
-			options: {
-				scales: {
-					y: {
-						ticks: {
-							stepSize: 1,
-							callback: function (value: number) {
-								if (value % 1 === 0) {
-									return value;
-								}
-							},
-						},
-					},
-				},
-			},
-		};
+  const sanitizeRangeLimit = (limit: number) => {
+	// if limit is closer to infinity, simply return "infinity"
+	if (limit == 9223372036854776000) {
+	  return "infinity";
 	}
+	if (limit == -9223372036854776000) {
+	  return "-infinity";
+	}
+	if (limit < 0) {
+	  return "0";
+	}
+	return limit;
+}
 
-	return (
-		<ShadowedContainer>
-			<h2>Number of scores in each level</h2>
-			<Bar
-				// change size of chart
-				data={data}
-			/>
-		</ShadowedContainer>
-	);
+
+  function processData(
+	levels: Record<number, Level>,
+	all_scores: number[],
+	ranges: any[], // You should define the proper type for 'ranges'
+	lower_is_better: boolean
+  ): ChartData<"bar"> {
+	// Create a label for each range
+	const labels = ranges.map(range => `${range.id}: ${sanitizeRangeLimit(range.lower_limit)}-${sanitizeRangeLimit(range.upper_limit)}`);
+  
+	// Initialize a dataset for each level with an array of zeros
+	const datasets = Object.keys(levels).map(level=> {
+	  return {
+		label: `Level ${level}`,
+		data: new Array(ranges.length).fill(0), // Initialize with zeros for each range
+		backgroundColor: levels[Number(level)].colors[0],
+	  };
+	});
+  
+	// Populate the data for each dataset
+	all_scores.forEach(score => {
+	  ranges.forEach((range, index) => {
+		const scoreIsInLevel = lower_is_better
+		  ? score <= range.lower_limit && score >= range.upper_limit
+		  : score >= range.lower_limit && score <= range.upper_limit;
+  
+		if (scoreIsInLevel) {
+		  // Increment the count for the corresponding level and range
+		  datasets[range.id - 1].data[index]++;
+		}
+	  });
+	});
+  
+	return {
+	  labels,
+	  datasets,
+	};
+  }
+  
+
+  const options = {
+	plugins: {
+	  title: {
+		display: true,
+		text: 'Number of students in each level',
+	  },
+	  tooltip: {
+		callbacks: {
+		  label: function(context: any) {
+			let label = context.dataset.label || '';
+			if (label) {
+			  label += ': ';
+			}
+			if (context.parsed.y !== null) {
+			  label += context.parsed.y + ' student' + (context.parsed.y !== 1 ? 's' : '');
+			}
+			return label;
+		  }
+		}
+	  }
+	},
+	scales: {
+	  x: {
+		stacked: true,
+	  },
+	  y: {
+		stacked: true,
+		beginAtZero: true,
+		title: {
+		  display: true,
+		  text: 'Number of Students'
+		}
+	  }
+	},
+	maintainAspectRatio: true
+  };
+  
+
+  return (
+    <ShadowedContainer>
+      <h2>Number of students in each level</h2>
+      <Bar
+        data={chartData}
+        options={options}
+      />
+    </ShadowedContainer>
+  );
 };
 
 export default ScoreChart;

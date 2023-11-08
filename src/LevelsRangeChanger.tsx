@@ -6,24 +6,60 @@
 import useStore from './zustand/store';
 
 // Types
-import { Level } from './types';
+import { useEffect, useState } from 'react';
+import LevelsRangeChangerRow from './LevelsRangeChangerRow';
+import { range } from './types';
 
 const LevelsRangeChanger = () => {
-	const levels: Record<number, Level> = useStore((state) => state.levels);
+	const ranges = useStore((state) => state.ranges);
+	const setRanges = useStore((state) => state.setRanges);
+	const [newRanges, setNewRanges] = useState(ranges);
 
-	const setLevel = (level: number, range: [number, number]) => {
-		useStore.setState((state) => {
-			state.levels[level].range = range;
-			return state;
-		});
-	};
+	useEffect(() => {
+		setNewRanges(ranges);
+	}, [ranges]);
 
-	const setLevelName = (level: number, name: string) => {
-		useStore.setState((state) => {
-			state.levels[level].name = name;
-			return state;
-		});
-	};
+
+
+	const unsavedRangeLimitUpdater = (level:number, limitType: "lower_limit" | "upper_limit", newLimitAmount: number) => {
+		
+		const updatedRange = [...newRanges]
+		updatedRange[level-1][limitType] = newLimitAmount;
+		setNewRanges(updatedRange);
+		
+		// setNewRanges((state) => {
+		// 	state[level-1][limitType] = newLimitAmount;
+		// 	return state;
+		// } );
+	}
+
+	const deleteRange = (id: number) => {
+		console.log("Delete range", id, "TODO");
+	}
+
+	const postNewRanges = async (id:  number, newRange: range
+		) => {
+		await fetch("/api/ranges/" + id, {
+			method: "PUT",
+			body: JSON.stringify(newRange),
+			headers: {
+				"Content-Type": "application/json",
+			},
+			// Add withCredentials to send the cookie with the request
+			credentials: "include",
+			
+		})	
+	}
+	const saveNewRanges = () => {
+		console.log("Save new ranges", newRanges, "TODO");
+		setRanges(newRanges);
+		for (const range of newRanges) {
+			postNewRanges(range.id, range);
+		}
+		
+		
+	}
+
 
 	return (
 		<div
@@ -45,101 +81,33 @@ const LevelsRangeChanger = () => {
 				}}>
 				<thead>
 					<tr>
-						<th>Level</th>
-						<th>Name</th>
+						<th>Id</th>
 						<th>Lower limit</th>
 						<th>Upper limit</th>
 						<th>Delete</th>
 					</tr>
 				</thead>
 				<tbody>
-					{Object.keys(levels).map((key) => {
-						const level = levels[parseInt(key)];
-						return (
-							<tr key={key}>
-								<td className='align-middle'>{key}</td>
-								<td>
-									<input
-										className='form-control'
-										type='text'
-										value={level.name}
-										// make the input take as little space as possible
-										style={{
-											width: '100%',
-											// center it
-											textAlign: 'center',
-										}}
-										onChange={(e) =>
-											setLevelName(parseInt(key), e.target.value)
-										}
-									/>
-								</td>
-								<td>
-									<input
-										className='form-control'
-										type='number'
-										value={level.range[0]}
-										onChange={(e) =>
-											setLevel(parseInt(key), [
-												parseInt(e.target.value),
-												level.range[1],
-											])
-										}
-									/>
-								</td>
-								<td>
-									<input
-										className='form-control'
-										type='number'
-										value={level.range[1]}
-										onChange={(e) =>
-											setLevel(parseInt(key), [
-												level.range[0],
-												parseInt(e.target.value),
-											])
-										}
-									/>
-								</td>
-								{/* Add a button to delete level */}
-								<td>
-									<button
-										className='btn btn-danger'
-										onClick={() => {
-											useStore.setState((state) => {
-												delete state.levels[parseInt(key)];
-												return state;
-											});
-										}}>
-										X
-									</button>
-								</td>
-							</tr>
-						);
-					})}
+					{newRanges.map((range, key) => 
+					 <LevelsRangeChangerRow
+					  key={key}
+					  range={range}
+					  unsavedLimitUpdater={unsavedRangeLimitUpdater}
+					  deleteRange={deleteRange}
+					 />
+					)}
 				</tbody>
 			</table>
 			{/* Add a button to add a new level */}
 			<button
 				className='btn btn-primary'
-				onClick={() => {
-					useStore.setState((state) => {
-						const newLevel = Object.keys(state.levels).length + 1;
-						state.levels[newLevel] = {
-							name: `Level ${newLevel}`,
-							range: [0, 0],
-							reward: {
-								amount: 0,
-								points: 0,
-							},
-							colors: ['#000000', '#000000'],
-							img: '',
-						};
-						return state;
-					});
-				}}>
-				Add Level
+				onClick={
+					saveNewRanges
+				}>
+				Update ranges
 			</button>
-		</div>
+
+			</div>
 	);
 };
 
