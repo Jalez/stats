@@ -36,6 +36,7 @@ export type StoreState = {
 	searchForYourBestSubmission: () => void;
 	updateSubmission: (submission: submission) => void;
 	setExercise: (exercise: exercise) => void;
+	setDataFromLti : (data_from_lti: Record<string, string>) => void;
 };
 
 const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
@@ -49,48 +50,48 @@ const useStore = create<StoreState>((set) => ({
 	ranges: [
         {
             "id": 1,
-            "upper_limit": 104106,
-            "lower_limit": 9223372036854775807,
+            "upper_limit": 9223372036854775807,
+            "lower_limit": 104105,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 0,
             "exercise": 1
         },
         {
             "id": 2,
-            "upper_limit": 84908,
-            "lower_limit": 104105,
+            "upper_limit": 104105,
+            "lower_limit": 84908,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 20,
             "exercise": 1
         },
         {
             "id": 3,
-            "upper_limit": 27716,
-            "lower_limit": 84907,
+            "upper_limit": 84907,
+            "lower_limit": 27716,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 40,
             "exercise": 1
         },
         {
             "id": 4,
-            "upper_limit": 5562,
-            "lower_limit": 27715,
+            "upper_limit": 27715,
+            "lower_limit": 5562,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 60,
             "exercise": 1
         },
         {
             "id": 5,
-            "upper_limit": 3005,
-            "lower_limit": 5561,
+            "upper_limit": 5561,
+            "lower_limit": 3005,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 80,
             "exercise": 1
         },
         {
             "id": 6,
-            "upper_limit": -1,
-            "lower_limit": 3004,
+            "upper_limit": 3004,
+            "lower_limit": -1,
             "updated": "2023-11-01T12:29:17.167697+02:00",
             "percentage": 100,
             "exercise": 1
@@ -258,6 +259,9 @@ const useStore = create<StoreState>((set) => ({
 	},
 	setExercise: (exercise: exercise) => {
 		set({ exercise });
+	},
+	setDataFromLti : (data_from_lti: Record<string, string>) => {
+		set({ data_from_lti });
 	},
 
 

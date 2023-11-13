@@ -91,19 +91,13 @@ const ProgressBar = () => {
 	let levelDetails: Level | undefined;
 	levelDetails = levels[your_range_details.id];
 
-
-
 	const minScore = your_range_details.lower_limit || 0;
-	// const maxScore = your_range_details.upper_limit || 0;
+	const maxScore = your_range_details.upper_limit || 0;
 
-	const range = lower_is_better ? your_range_details.lower_limit - your_range_details.upper_limit :
-	your_range_details.upper_limit - your_range_details.lower_limit;
+	const range = your_range_details.upper_limit - your_range_details.lower_limit;
 
-	const progress = lower_is_better?  minScore - student_score : student_score - minScore;
-	// make positive
-
-	
-
+	const progress = lower_is_better?  maxScore - student_score : student_score - minScore;
+	const progressToNextLevel = range - progress;
 
 	const percentage = (progress / range) * 100;
 
@@ -113,8 +107,6 @@ const ProgressBar = () => {
 	const LeftSideProgressToDegrees = (leftSideProgress / 50) * 180;
 	const RightSideProgressToDegrees = (rightSideProgress / 50) * 180;
 
-
-		
 
 	return (
 		<ShadowedContainer>
@@ -174,7 +166,7 @@ const ProgressBar = () => {
 				}}>
 					<p>
 
-					Next level at: {lower_is_better ? your_range_details.upper_limit : your_range_details.lower_limit || 0}
+					Next level at: {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0}
 					</p>
 					<p>
 					Your current score: {student_score}
@@ -184,9 +176,7 @@ const ProgressBar = () => {
 			<span>
 				{' '}
 				You need <strong>{
-					lower_is_better ? 
-				student_score - your_range_details.upper_limit 
-					: your_range_details.lower_limit - student_score
+					progressToNextLevel
 				} </strong>
 				{lower_is_better ? ' less ' : ' more '}
 				 score
@@ -194,8 +184,7 @@ const ProgressBar = () => {
 				to level up.
 			</span>
 			<div>
-				{/* his score / max score */}
-				{/* <RotatingSpan degrees="180">⏳</RotatingSpan> */}
+
 			</div>
 		</ShadowedContainer>
 	);

@@ -8,7 +8,7 @@ import ShadowedContainer from './ShadowedContainer';
 ChartJS.register(...registerables);
 
 const ScoreChart: React.FC = () => {
-  const { all_submissions, levels, ranges, lower_is_better } = useStore((state: StoreState) => state);
+  const { all_submissions, levels, ranges } = useStore((state: StoreState) => state);
   const [chartData, setChartData] = useState<ChartData<"bar">>({
     labels: [],
     datasets: [],
@@ -18,8 +18,8 @@ const ScoreChart: React.FC = () => {
 
   useEffect(() => {
     const all_scores = all_submissions.map((submission) => submission.points);
-    if(ranges)setChartData(processData(levels, all_scores, ranges, lower_is_better));
-  }, [levels, all_submissions, ranges, lower_is_better]);
+    if(ranges)setChartData(processData(levels, all_scores, ranges));
+  }, [levels, all_submissions, ranges]);
 
   if(!ranges) return "No ranges found, please select an exercise that has ranges in the api to see student chart";
 
@@ -42,7 +42,6 @@ const ScoreChart: React.FC = () => {
 	levels: Record<number, Level>,
 	all_scores: number[],
 	ranges: any[], // You should define the proper type for 'ranges'
-	lower_is_better: boolean
   ): ChartData<"bar"> {
 	// Create a label for each range
 	
@@ -64,10 +63,7 @@ const ScoreChart: React.FC = () => {
 	// Populate the data for each dataset
 	all_scores.forEach(score => {
 	  ranges.forEach((range, index) => {
-		const scoreIsInLevel = lower_is_better
-		  ? score <= range.lower_limit && score >= range.upper_limit
-		  : score >= range.lower_limit && score <= range.upper_limit;
-  
+		const scoreIsInLevel =score <= range.lower_limit && score >= range.upper_limit;  
 		if (scoreIsInLevel) {
 		  // Increment the count for the corresponding level and range
 		//   check if range is in levels, if not, skip

@@ -2,6 +2,7 @@ import TabbedContent from "../General/TabbedContent";
 import ShadowedContainer from "../ShadowedContainer";
 import StateExerciseDisplayer from "./Exercise";
 import StateLevelsDisplayer from "./Levels";
+import Lti from "./Lti";
 import StateNotificationDisplayer from "./Notification";
 import StateSelectedStudentDisplayer from "./SelectedStudent";
 import StateSubmissionsDisplayer from "./Submissions";
@@ -46,6 +47,11 @@ const StateDisplayer = () => {
                     id: "selectedStudent",
                     label: "Selected Student",
                     content: <StateSelectedStudentDisplayer />
+                },
+                {
+                    id: "LTI",
+                    label: "LTI data",
+                    content: <Lti/>
                 }
                 
             ]}

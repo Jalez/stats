@@ -5,6 +5,7 @@ import SubmissionsManager from './SubmissionsManager';
 import Testing from './Testing';
 import ShadowedContainer from './ShadowedContainer';
 import TabbedContent from './General/TabbedContent';
+import ExerciseFetcher from './ExerciseFetcher';
 
 const Settings = () => {
 
@@ -34,6 +35,11 @@ const Settings = () => {
 					label: 'Levels Range Changer',
 					content: <LevelsRangeChanger />,
 				},
+				{
+					id: "exercise",
+					label: "Exercise fetcher",
+					content: <ExerciseFetcher />
+				}
 			]}
 			/>
 
