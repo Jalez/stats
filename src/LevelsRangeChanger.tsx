@@ -19,6 +19,8 @@ const LevelsRangeChanger = () => {
 		setNewRanges(ranges);
 	}, [ranges]);
 
+	if(!newRanges) return "No ranges found, please select an exercise that has ranges in the api to modify ranges";
+
 
 
 	const unsavedRangeLimitUpdater = (level:number, limitType: "lower_limit" | "upper_limit", newLimitAmount: number) => {

@@ -44,17 +44,11 @@ const StudentBoard = () => {
 		<h1
 				style={{
 					backdropFilter: 'blur(2px)',
-					// opacity: 0.9,
 					display: 'inline-block',
 					textAlign: 'center',
 					margin: '0 auto',
 					width: '100%',
-					// give it a shadow
-					// textShadow: '0 0 10px rgba(0,0,0,0.5)',
-					// stylize the header to be more visible
 					fontWeight: 'bold',
-
-					// color: 'white',
 				}}>
 				{' '}
 				Available Statistics for assignment {exercise.id}

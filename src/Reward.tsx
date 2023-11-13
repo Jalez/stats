@@ -5,6 +5,7 @@ import useStore from './zustand/store';
 
 const Reward = () => {
 	const { your_best_submission, levels, ranges } = useStore((state) => state);
+	if(!ranges) return "No ranges found";
 	if (!your_best_submission) return 'No submission found';
 	const your_best_score = your_best_submission?.points;
 	// find the level where the range contains the student score

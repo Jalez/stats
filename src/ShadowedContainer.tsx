@@ -8,13 +8,9 @@ const ShadowedContainer: React.FC<ShadowedContainerProps> = ({ children }) => {
 	return (
 		<div
 			style={{
-				// center elements
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
-				// height: 'fit-content',
-				// maxWidth: 'fit-content',
-				// maxHeight: '50%',
 				boxShadow: '0 0 10px rgba(0,0,0,0.5)',
 				flexShrink: 1,
 				maxHeight: 'fit-content',
@@ -25,9 +21,6 @@ const ShadowedContainer: React.FC<ShadowedContainerProps> = ({ children }) => {
 				backgroundColor: 'white',
 				backdropFilter: 'blur(8px)',
 				opacity: 0.9,
-				// make the container see-through
-				// blur the elements behind the element
-
 				breakInside: 'avoid',
 			}}>
 			{children}

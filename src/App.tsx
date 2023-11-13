@@ -137,9 +137,9 @@ function App() {
 				const data = await getApiData(route);
 				if (data) {
 					const results = data.results;
-					// find the ranges that have been updated last
-
-					setRanges(data.results);
+					// get the last 6 ranges
+					const lastSixRanges = results.slice(-6);
+					setRanges(lastSixRanges);
 				}
 			}
 			getRanges(exercise.id);
