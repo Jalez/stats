@@ -15,18 +15,19 @@ export type StoreState = {
 	user_id: number;
 	data_from_lti: Record<string, string>;
 	ranges: range[] | undefined;
-	levels: Record<number, Level>;
+	levels: Level[];
 	viewer_type: 'student' | 'teacher';
 	your_best_submission: submission | undefined;
-	your_all_submissions: submission[];
+	your_all_submissions: submission[] | undefined;
 	your_range_details: range | undefined;
+	your_level_details: Level | undefined;
 	all_submissions: submission[] | undefined;
 	lower_is_better: boolean;
 	// changeLevelRange: (level: number, range: number[]) => void;
 	setViewerType: (viewer_type: 'student' | 'teacher') => void;
 	setYourBestSubmission: (your_best_submission: submission) => void;
 	setAllSubmissions: (all_submissions: submission[]) => void;
-	setLevels: (levels: Record<number, Level>) => void;
+	setLevels: (levels: Level[]) => void;
 	addNewSubmission: (submission: submission) => void;
 	updateLevels: (levels: Record<number, Level>) => void;
 	calculateYourRangeDetails: () => void;
@@ -37,6 +38,7 @@ export type StoreState = {
 	updateSubmission: (submission: submission) => void;
 	setExercise: (exercise: exercise) => void;
 	setDataFromLti : (data_from_lti: Record<string, string>) => void;
+	updateYourLevelDetails: (range: range) => void;
 };
 
 const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
@@ -97,50 +99,58 @@ const useStore = create<StoreState>((set) => ({
             "exercise": 1
         }
     ],
-	levels: {
-		1: {
+	levels: [
+		{
+			level: 1,
 			name: 'Bug squasher',
 			colors: ['#fef2ca', '#318874'],
 			badge: level1Img,
+			percentage: 0,
 		},
-		2: {
+		{
+			level: 2,
 			name: 'Code monkey',
 			colors: ['#415b5e', '#fde5b4'],
 			badge: level2Img,
+			percentage: 20,
 		},
-		3: {
+		{
+			level: 3,
 			name: 'Performance brewer',
 			colors: ['#fe6a77', '#a38271'],
 			badge: level3Img,
+			percentage: 40,
 		},
-		4: {
+		{
+			level: 4,
 			name: 'Algorithmic alchemist',
 			colors: ['#8f476a', '#b28869'],
 			badge: level4Img,
+			percentage: 60,
 		},
-		5: {
+		{
+			level: 5,
 			name: 'Data Structure druid',
 			colors: ['#5f877d', '#5f877d'],
 			badge: level5Img,
+			percentage: 80,
 		},
-		6: {
+		{
+			level: 6,
 			name: 'Binary sorcerer supreme',
 			colors: ['#ffe6ab', '#2a293c'],
 			badge: level6Img,
+			percentage: 100,
 		},
-	},
+	],
 	all_submissions: undefined,
 	lower_is_better: true,
 	selected_student: 0, //The students id
 	viewer_type: returnIfLocalhost("teacher", "student") as 'student' | 'teacher',
 	your_best_submission: undefined,
 	your_range_details: undefined,
-	your_all_submissions: [        {
-		"aplus_id": 12,
-		"points": 43833,
-		"_order": 0,
-		"exercise": 1
-	}],
+	your_level_details: undefined,
+	your_all_submissions: undefined,
 	updateRanges: (ranges: {
 		id: number;
 		upper_limit: number;
@@ -184,7 +194,7 @@ const useStore = create<StoreState>((set) => ({
 		console.log("setting all submissions, ", all_submissions)
 		set({ all_submissions });
 	},
-	setLevels: (levels: Record<number, Level>) => {
+	setLevels: (levels: Level[]) => {
 		set({ levels });
 	},
 	addNewSubmission: (submission: submission) => {
@@ -220,15 +230,29 @@ const useStore = create<StoreState>((set) => ({
 	calculateYourRangeDetails: () => {
 		// look for the range that your best submission is in. Take lower_is_better into account
 		set((state) => ({
-			your_range_details: state?.ranges ? state?.ranges[state?.ranges.findIndex((range) => {
+			your_range_details: state?.ranges ? state?.ranges.find((range) => {
 				if(!state.your_best_submission) return false;
-				if (state.lower_is_better) {
-					if(range.upper_limit === -1) return true;
-					return state.your_best_submission.points > range.lower_limit;
-				} else {
-					return state.your_best_submission.points < range.upper_limit;
+
+				if(range.upper_limit >= state.your_best_submission.points) {
+					if(range.lower_limit <= state.your_best_submission.points) {
+						// call state.updateYourLevelDetails(range);
+						state.updateYourLevelDetails(range);
+						return true;
+					}
 				}
-			})-1] : undefined,
+				return false;
+			}) : undefined,
+
+		}));
+
+
+	},
+	updateYourLevelDetails: ( range: range) => {
+		// look for the level that shares the ranges percentage
+		set((state) => ({
+			your_level_details: state.levels.find((level) => {
+				return level.percentage === range.percentage;
+			}),
 		}));
 	}
 	// checkLowerIsBetter: () => {

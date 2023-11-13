@@ -2,7 +2,7 @@ import ObjectDisplayer from "../General/ObjectDisplayer";
 import useStore from "../zustand/store"
 
 const StateSelectedStudentDisplayer = () => {
-    const { your_best_submission, your_range_details, user_id } = useStore((state) => state);
+    const { your_best_submission, your_range_details, user_id, your_level_details } = useStore((state) => state);
     return (
         <div>
             <div>
@@ -24,6 +24,12 @@ const StateSelectedStudentDisplayer = () => {
                 <h3>Range details</h3>
                 {your_range_details ?
                     <ObjectDisplayer object={your_range_details} /> : "No range details found"
+                }
+            </div>
+            <div>
+                <h3>Level details</h3>
+                {your_level_details ?
+                    <ObjectDisplayer object={your_level_details} /> : "No level details found"
                 }
             </div>
         </div>

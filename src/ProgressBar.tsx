@@ -5,7 +5,6 @@ import './ProgressBar.css';
 import styled, { keyframes } from 'styled-components';
 import { HTMLAttributes, useEffect } from 'react';
 import useStore, { useNotificationStore } from './zustand/store';
-import { Level } from './types';
 import ShadowedContainer from './ShadowedContainer';
 
 const rotate = (degrees: string) => keyframes`
@@ -38,9 +37,9 @@ const ProgressBar = () => {
 		) => state.your_best_submission?.points || 0);
 	const all_submissions = useStore((state) => state.all_submissions);
 	const your_range_details = useStore((state) => state.your_range_details);
+	const your_level_details = useStore((state) => state.your_level_details);
 	if (!all_submissions) return "No submissions found, please select an exercise that has submissions in the api to see student progress";
 	const scores = all_submissions?.map((submission) => submission.points);
-	const levels: Record<number, Level> = useStore((state) => state.levels);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
 	);
@@ -88,8 +87,6 @@ const ProgressBar = () => {
 		return null;
 	}
 		
-	let levelDetails: Level | undefined;
-	levelDetails = levels[your_range_details.id];
 
 	const minScore = your_range_details.lower_limit || 0;
 	const maxScore = your_range_details.upper_limit || 0;
@@ -128,7 +125,7 @@ const ProgressBar = () => {
 							degrees={String(LeftSideProgressToDegrees)}
 							start={1.5}
 							end={1.8}
-							color={levelDetails?.colors[0]}></RotatingSpan>
+							color={your_level_details?.colors[0]}></RotatingSpan>
 						{/* <span
 							className='progress-bar'
 							style={{ borderColor: levelDetails?.colors[0] }}></span> */}
@@ -139,11 +136,11 @@ const ProgressBar = () => {
 							degrees={String(RightSideProgressToDegrees)}
 							start={1.8}
 							end={0}
-							color={levelDetails?.colors[0]}></RotatingSpan>
+							color={your_level_details?.colors[0]}></RotatingSpan>
 					</span>
 					<div className='progress-value'>
 						<img
-							src={levelDetails?.badge}
+							src={your_level_details?.badge}
 							alt='level 4'
 							width={140}
 							height={140}

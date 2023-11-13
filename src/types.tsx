@@ -1,10 +1,12 @@
 /** @format */
 
 export type Level = {
+	level: number;
 	name: string;
 	// reward should be object with amount key, points key and img key
 	colors: string[];
 	badge: string;
+	percentage: number;
 };
 
 export type reward = {
