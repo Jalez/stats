@@ -54,17 +54,13 @@ const StudentBoard = () => {
 				Available Statistics for assignment {exercise.id}
 			</h1>
 		<div
-			// className='container'
 			style={{
-				// width: '100%',
 				height: 'fit-content',
 				margin: '1rem',
 				padding: '1rem',
 				borderRadius: '1rem',
-				// give it a gradient background that reflects their current level colors
 				background: `linear-gradient(45deg, ${levels[your_range_details?.id || 0]?.colors[0] || "white"} 30%, ${levels[your_range_details?.id || 0]?.colors[1] || "#222"
 				} 90%)`,
-				// backgroundImage: `url(${background})`,
 				backgroundSize: 'cover',
 				backgroundPosition: 'center',
 				boxShadow: '0 0 10px rgba(0,0,0,0.5)',
