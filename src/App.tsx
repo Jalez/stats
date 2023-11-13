@@ -99,7 +99,7 @@ function App() {
 			// Give it a time out of 5 seconds before it gives up
 			const route = '/api/exercises/';
 			const data = await getApiData(route);
-			if (data.results) {
+			if (data?.results) {
 				const results = data.results;
 				// find the exercise with the given id
 				const exerciseData = results.find((e: any) => e.exercise_id === exercise_id); 
