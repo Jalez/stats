@@ -10,8 +10,9 @@ import crown from './assets/crown.svg';
 const HighScores = () => {
 	const { all_submissions, your_best_submission, lower_is_better  } = useStore((state) => state);
 
-	const all_points = all_submissions.map((submission) => submission.points);
-	const sortedScores = all_points.sort((a, b) => lower_is_better ? a - b : b - a);
+	if(!all_submissions) return "No submissions found with the given exercise id.";
+	const all_points = all_submissions?.map((submission) => submission.points);
+	const sortedScores = all_points?.sort((a, b) => lower_is_better ? a - b : b - a);
 
 	if(!your_best_submission) return "No submission found, please submit your solution to see your position";
 

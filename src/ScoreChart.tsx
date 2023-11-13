@@ -14,6 +14,8 @@ const ScoreChart: React.FC = () => {
     datasets: [],
   });
 
+  if(!all_submissions) return "No submissions found, please select an exercise that has submissions in the api to see student chart";
+
   useEffect(() => {
     const all_scores = all_submissions.map((submission) => submission.points);
     if(ranges)setChartData(processData(levels, all_scores, ranges, lower_is_better));

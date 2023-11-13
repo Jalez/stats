@@ -85,34 +85,16 @@ function App() {
 	useEffect(() => {
 		// look for the submission with the given aplus_id being equal to the user_id
 		// and set the your_best_submission to that submission
-		console.log("Updating your best submission")
-		const your_best_submission = all_submissions.find(submission => submission.aplus_id === user_id);
-		if(your_best_submission) setYourBestSubmission(your_best_submission);
-		// find the level where the range contains the student score
-		calculateYourRangeDetails();
+		const your_best_submission = all_submissions?.find(submission => submission.aplus_id === user_id);
+		if(your_best_submission) {
+			setYourBestSubmission(your_best_submission);
+			calculateYourRangeDetails();
+		}
 		
 	}, [all_submissions, user_id, ranges])
 
 	useEffect(() => {
-		calculateYourRangeDetails();
 		console.log('App mounted');
-		//Get ranges from /api/ranges/
-		
-
-		const getSubmissions = async () => {
-			// Give it a time out of 5 seconds before it gives up
-			const route = '/api/submissions/';
-			let data = await getApiData(route);
-			if (data) {
-				setAllSubmissions(data.results);
-				while(data.next) {
-					data = await getApiData(data.next);
-					updateAllSubmissions(data.results);
-				}
-			}
-		}
-		getSubmissions();
-
 		const getExercise = async (exercise_id: number) => {
 			// Give it a time out of 5 seconds before it gives up
 			const route = '/api/exercises/';

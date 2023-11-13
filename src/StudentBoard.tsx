@@ -22,6 +22,7 @@ const StudentBoard = () => {
 	if(!exercise) return "No exercise found, please select an exercise to see student statistics";
 	const exercise_deadline = exercise.deadline;
 
+	if(!all_submissions) return "No submissions found with the given exercise id.";
 	let all_scores = all_submissions.map((submission) => submission.points);
 	// arrange all scores depending on whether lower is better or not
 	if (lower_is_better) {

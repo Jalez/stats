@@ -38,7 +38,8 @@ const ProgressBar = () => {
 		) => state.your_best_submission?.points || 0);
 	const all_submissions = useStore((state) => state.all_submissions);
 	const your_range_details = useStore((state) => state.your_range_details);
-	const scores = all_submissions.map((submission) => submission.points);
+	if (!all_submissions) return "No submissions found, please select an exercise that has submissions in the api to see student progress";
+	const scores = all_submissions?.map((submission) => submission.points);
 	const levels: Record<number, Level> = useStore((state) => state.levels);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state

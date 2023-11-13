@@ -20,7 +20,7 @@ export type StoreState = {
 	your_best_submission: submission | undefined;
 	your_all_submissions: submission[];
 	your_range_details: range | undefined;
-	all_submissions: submission[];
+	all_submissions: submission[] | undefined;
 	lower_is_better: boolean;
 	// changeLevelRange: (level: number, range: number[]) => void;
 	setViewerType: (viewer_type: 'student' | 'teacher') => void;
@@ -128,66 +128,7 @@ const useStore = create<StoreState>((set) => ({
 			badge: level6Img,
 		},
 	},
-	all_submissions: [{
-		"aplus_id": 1,
-		"points": 210207,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 2,
-		"points": 297014,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 4,
-		"points": 328732,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 5,
-		"points": 410608,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 6,
-		"points": 254661,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 7,
-		"points": 150429,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 9,
-		"points": 1861412,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 10,
-		"points": 301254,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 11,
-		"points": 313719,
-		"_order": 0,
-		"exercise": 1
-	},
-	{
-		"aplus_id": 12,
-		"points": 43833,
-		"_order": 0,
-		"exercise": 1
-	}],
+	all_submissions: undefined,
 	lower_is_better: true,
 	selected_student: 0, //The students id
 	viewer_type: returnIfLocalhost("teacher", "student") as 'student' | 'teacher',
@@ -220,21 +161,22 @@ const useStore = create<StoreState>((set) => ({
 	updateSubmission: (submission: submission) => {
 		// update the submission in the backend
 		set((state) => ({
-			all_submissions: state.all_submissions.map((sub) => {
+			all_submissions: state.all_submissions ? state.all_submissions.map((sub) => {
 				if (sub.aplus_id === submission.aplus_id) {
 					return submission;
 				} else {
 					return sub;
 				}
-			}),
+			}) : undefined,
+			
 		}));
 	},
 	// Create a function that sets me search and set the best submission
 	searchForYourBestSubmission: () => {
 		set((state) => ({
-			your_best_submission: state.all_submissions.find((submission) => {
+			your_best_submission: state.all_submissions ? state.all_submissions.find((submission) => {
 				return submission.aplus_id === state.user_id;
-			}),
+			}) : undefined,
 		}));
 	},
 	setAllSubmissions: (all_submissions: submission[]) => {
@@ -246,13 +188,13 @@ const useStore = create<StoreState>((set) => ({
 	},
 	addNewSubmission: (submission: submission) => {
 		set((state) => ({
-			all_submissions: [...state.all_submissions, submission],
+			all_submissions: state.all_submissions ?  [...state.all_submissions, submission] : [submission],
 		}));
 	},
 	updateAllSubmissions: (submissions: submission[]) => {
 		console.log("updating all submissions, ", submissions)
 		set((state) => ({
-			all_submissions: [...state.all_submissions, ...submissions],
+			all_submissions: state.all_submissions ?  [...state.all_submissions, ...submissions] : submissions,
 		}));
 	},
 	updateLevels: (levels: Record<number, Level>) => {
@@ -265,13 +207,13 @@ const useStore = create<StoreState>((set) => ({
 	},
 	sortSubmissions: () => {
 		set((state) => ({
-			all_submissions: state.all_submissions.sort((a, b) => {
+			all_submissions: state.all_submissions ? state.all_submissions.sort((a, b) => {
 				if (state.lower_is_better) {
 					return a.points - b.points;
 				} else {
 					return b.points - a.points;
 				}
-			}),
+			}) : undefined,
 		}));
 	},
 	calculateYourRangeDetails: () => {
