@@ -64,7 +64,7 @@ const getApiData = async (url: string) => {
 	}
 }
 function App() {
-    const {setExercise, changeUser, setYourBestSubmission, setViewerType, calculateYourRangeDetails, setRanges, setAllSubmissions, updateAllSubmissions} = useStore(state => state)
+    const {exercise, setExercise, changeUser, setYourBestSubmission, setViewerType, calculateYourRangeDetails, setRanges, setAllSubmissions, updateAllSubmissions} = useStore(state => state)
 
 	const test_exercise_id = 42;
 	const exercise_id = (window as any).GLOBAL_VARS.exer_id || test_exercise_id;
@@ -97,15 +97,7 @@ function App() {
 		calculateYourRangeDetails();
 		console.log('App mounted');
 		//Get ranges from /api/ranges/
-		const getRanges = async () => {
-			// Give it a time out of 5 seconds before it gives up
-			const route = '/api/ranges/';
-			const data = await getApiData(route);
-			if (data) {
-				setRanges(data.results);
-			}
-		}
-		getRanges();
+		
 
 		const getSubmissions = async () => {
 			// Give it a time out of 5 seconds before it gives up
@@ -135,6 +127,41 @@ function App() {
 		// Currently, by default, we'll get the exercise with id = 1
 		getExercise(exercise_id);
 	}, []);
+
+
+	useEffect(() => {
+		if(exercise) {
+			const getRanges = async (exercise_id: number) => {
+				// Give it a time out of 5 seconds before it gives up
+				const route = '/api/ranges/?exercise=' + exercise_id;
+				const data = await getApiData(route);
+				if (data) {
+					const results = data.results;
+					// find the ranges that have been updated last
+
+					setRanges(data.results);
+				}
+			}
+			getRanges(exercise.id);
+
+			const getSubmissions = async (exercise_id: number) => {
+				// Give it a time out of 5 seconds before it gives up
+				const route = '/api/submissions/?exercise=' + exercise_id;
+				let data = await getApiData(route);
+				if (data) {
+					setAllSubmissions(data.results);
+					while(data.next) {
+						data = await getApiData(data.next);
+						updateAllSubmissions(data.results);
+					}
+				}
+			}
+			getSubmissions(exercise.id);
+
+
+		}
+	}, [exercise])
+
 	return (
 		<div className='container'>
 			{

@@ -11,10 +11,10 @@ import level6Img from '../assets/level 6 - DSS.png';
 
 
 export type StoreState = {
-	exercise: exercise;
+	exercise: exercise | undefined;
 	user_id: number;
 	data_from_lti: Record<string, string>;
-	ranges: range[];
+	ranges: range[] | undefined;
 	levels: Record<number, Level>;
 	viewer_type: 'student' | 'teacher';
 	your_best_submission: submission | undefined;
@@ -43,12 +43,7 @@ const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
 }
 
 const useStore = create<StoreState>((set) => ({
-	exercise: {
-		"id": 1,
-		"exercise_id": 42,
-		"deadline": "2023-11-02T12:29:16.914169+02:00",
-		"course": 1
-	},
+	exercise: undefined,
 	user_id: 99,
 	data_from_lti: {},
 	ranges: [
@@ -282,7 +277,7 @@ const useStore = create<StoreState>((set) => ({
 	calculateYourRangeDetails: () => {
 		// look for the range that your best submission is in. Take lower_is_better into account
 		set((state) => ({
-			your_range_details: state.ranges[state.ranges.findIndex((range) => {
+			your_range_details: state?.ranges ? state?.ranges[state?.ranges.findIndex((range) => {
 				if(!state.your_best_submission) return false;
 				if (state.lower_is_better) {
 					if(range.upper_limit === -1) return true;
@@ -290,7 +285,7 @@ const useStore = create<StoreState>((set) => ({
 				} else {
 					return state.your_best_submission.points < range.upper_limit;
 				}
-			})-1]
+			})-1] : undefined,
 		}));
 	}
 	// checkLowerIsBetter: () => {

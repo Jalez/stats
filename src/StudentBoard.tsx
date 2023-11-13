@@ -19,6 +19,7 @@ const StudentBoard = () => {
 		lower_is_better,
 	} = useStore((state) => state);
 
+	if(!exercise) return "No exercise found, please select an exercise to see student statistics";
 	const exercise_deadline = exercise.deadline;
 
 	let all_scores = all_submissions.map((submission) => submission.points);

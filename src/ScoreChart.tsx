@@ -16,8 +16,10 @@ const ScoreChart: React.FC = () => {
 
   useEffect(() => {
     const all_scores = all_submissions.map((submission) => submission.points);
-    setChartData(processData(levels, all_scores, ranges, lower_is_better));
+    if(ranges)setChartData(processData(levels, all_scores, ranges, lower_is_better));
   }, [levels, all_submissions, ranges, lower_is_better]);
+
+  if(!ranges) return "No ranges found, please select an exercise that has ranges in the api to see student chart";
 
   const sanitizeRangeLimit = (limit: number) => {
 	// if limit is closer to infinity, simply return "infinity"
