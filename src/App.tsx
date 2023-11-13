@@ -1,11 +1,12 @@
 /** @format */
 
-import AppState from './StateDisplayer';
+import AppState from './StateDisplayer/StateDisplayer';
 import Settings from './Settings';
 import StudentBoard from './StudentBoard';
 import View from './View';
 import useStore from './zustand/store';
 import { useEffect } from 'react';
+import ViewSwitch from './ViewSwitch';
 
 
 declare global {
@@ -63,8 +64,10 @@ const getApiData = async (url: string) => {
 	}
 }
 function App() {
-    const {changeUser, setYourBestSubmission, setViewerType, calculateYourRangeDetails, setRanges, setAllSubmissions, updateAllSubmissions} = useStore(state => state)
+    const {setExercise, changeUser, setYourBestSubmission, setViewerType, calculateYourRangeDetails, setRanges, setAllSubmissions, updateAllSubmissions} = useStore(state => state)
 
+	const test_exercise_id = 42;
+	const exercise_id = (window as any).GLOBAL_VARS.exer_id || test_exercise_id;
 	const {user_id, all_submissions, ranges} = useStore(state => state);
 	useEffect(() => {
 		if(GLOBAL_VARS.instructor) {
@@ -115,12 +118,28 @@ function App() {
 					updateAllSubmissions(data.results);
 				}
 			}
-	
 		}
 		getSubmissions();
+
+		const getExercise = async (exercise_id: number) => {
+			// Give it a time out of 5 seconds before it gives up
+			const route = '/api/exercises/';
+			const data = await getApiData(route);
+			if (data.results) {
+				const results = data.results;
+				// find the exercise with the given id
+				const exerciseData = results.find((e: any) => e.exercise_id === exercise_id); 
+				setExercise(exerciseData);
+			}
+		}
+		// Currently, by default, we'll get the exercise with id = 1
+		getExercise(exercise_id);
 	}, []);
 	return (
 		<div className='container'>
+			{
+				GLOBAL_VARS.instructor ? <ViewSwitch/> : null
+			}
 			{/* <Notification /> */}
 			<View for='teacher'>
 				<h1>Teacher View</h1>
@@ -128,7 +147,7 @@ function App() {
 					<Settings />
 					<AppState />
 				</div>
-				<StudentBoard />
+				{/* <StudentBoard /> */}
 				{/* <ScoreChart /> */}
 			</View>
 			<View for='student'>

@@ -41,7 +41,12 @@ const ScoreChart: React.FC = () => {
 	lower_is_better: boolean
   ): ChartData<"bar"> {
 	// Create a label for each range
-	const labels = ranges.map(range => `${range.id}: ${sanitizeRangeLimit(range.lower_limit)}-${sanitizeRangeLimit(range.upper_limit)}`);
+	
+	const labels = ranges.map(range => {
+		if(range.id <= Object.keys(levels).length) {
+			return `${range.id}: ${sanitizeRangeLimit(range.lower_limit)}-${sanitizeRangeLimit(range.upper_limit)}`
+		}
+	});
   
 	// Initialize a dataset for each level with an array of zeros
 	const datasets = Object.keys(levels).map(level=> {
@@ -61,7 +66,11 @@ const ScoreChart: React.FC = () => {
   
 		if (scoreIsInLevel) {
 		  // Increment the count for the corresponding level and range
-		  datasets[range.id - 1].data[index]++;
+		//   check if range is in levels, if not, skip
+		if(range.id <= Object.keys(levels).length) {
+			datasets[range.id - 1].data[index]++;
+		}
+
 		}
 	  });
 	});
@@ -112,8 +121,10 @@ const ScoreChart: React.FC = () => {
   
 
   return (
-    <ShadowedContainer>
-      <h2>Number of students in each level</h2>
+    <ShadowedContainer
+
+	>
+      <h2>Levels & students</h2>
       <Bar
         data={chartData}
         options={options}

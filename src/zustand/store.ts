@@ -1,7 +1,7 @@
 /** @format */
 
 import { create } from 'zustand';
-import { Level, range, submission, viewer_type } from '../types';
+import { Level, exercise, range, submission, viewer_type } from '../types';
 import level1Img from '../assets/level 1 - BS.png';
 import level2Img from '../assets/level 2 - CM.png';
 import level3Img from '../assets/level 3 - PB.png';
@@ -11,12 +11,7 @@ import level6Img from '../assets/level 6 - DSS.png';
 
 
 export type StoreState = {
-	exercise: {
-		id: number;
-		exercise_id: number;
-		deadline: string;
-		course: number;
-	};
+	exercise: exercise;
 	user_id: number;
 	data_from_lti: Record<string, string>;
 	ranges: range[];
@@ -40,6 +35,7 @@ export type StoreState = {
 	changeUser: (user_id: number) => void;
 	searchForYourBestSubmission: () => void;
 	updateSubmission: (submission: submission) => void;
+	setExercise: (exercise: exercise) => void;
 };
 
 const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
@@ -322,7 +318,10 @@ const useStore = create<StoreState>((set) => ({
 		// set the user_id and then call searchForYourBestSubmission to find the best submission
 		
 		set({ user_id });
-	}
+	},
+	setExercise: (exercise: exercise) => {
+		set({ exercise });
+	},
 
 
 }));

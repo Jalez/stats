@@ -1,10 +1,10 @@
-import TabbedContent from "./General/TabbedContent";
-import ShadowedContainer from "./ShadowedContainer";
-import StateExerciseDisplayer from "./StateExerciseDisplayer";
-import StateLevelsDisplayer from "./StateLevelsDisplayer";
-import StateNotificationDisplayer from "./StateNotificationDisplayer";
-import StateSelectedStudentDisplayer from "./StateSelectedStudentDisplayer";
-import StateSubmissionsDisplayer from "./StateSubmissionsDisplayer";
+import TabbedContent from "../General/TabbedContent";
+import ShadowedContainer from "../ShadowedContainer";
+import StateExerciseDisplayer from "./Exercise";
+import StateLevelsDisplayer from "./Levels";
+import StateNotificationDisplayer from "./Notification";
+import StateSelectedStudentDisplayer from "./SelectedStudent";
+import StateSubmissionsDisplayer from "./Submissions";
 
 const StateDisplayer = () => {
 

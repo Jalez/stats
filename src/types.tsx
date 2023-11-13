@@ -29,4 +29,11 @@ export type submission = {
 	exercise: number
 }
 
+export type exercise = {
+	id: number;
+	exercise_id: number;
+	deadline: string;
+	course: number;
+};
+
 export type viewer_type = 'student' | 'teacher';

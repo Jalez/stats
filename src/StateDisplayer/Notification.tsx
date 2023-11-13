@@ -1,4 +1,4 @@
-import { useNotificationStore } from "./zustand/store"
+import { useNotificationStore } from "../zustand/store"
 
 const StateNotificationDisplayer = () => {
     const {notification, notificationType} = useNotificationStore((state) => state);

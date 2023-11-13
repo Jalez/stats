@@ -1,4 +1,4 @@
-import useStore from "./zustand/store";
+import useStore from "../zustand/store";
 
 const StateLevelsDisplayer = () => {
     const { levels } = useStore((state) => state);

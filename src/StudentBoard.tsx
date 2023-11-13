@@ -3,10 +3,11 @@
 import ProgressBar from './ProgressBar';
 import StudentStats from './StudentStats';
 import useStore from './zustand/store';
-import background from './assets/background.webp';
+// import background from './assets/background.webp';
 
 import ScoreChart from './ScoreChart';
 import BeforeDeadlineDisplay from './BeforeDeadlineDisplay';
+import HighScores from './HighScores';
 
 const StudentBoard = () => {
 	const {
@@ -14,17 +15,23 @@ const StudentBoard = () => {
 		your_best_submission,
 		all_submissions,
 		exercise,
-		your_range_details
+		your_range_details,
+		lower_is_better,
 	} = useStore((state) => state);
 
-	const exercise_deadline = exercise.deadline; 
-	const assignment_name = exercise.id
+	const exercise_deadline = exercise.deadline;
 
-	const all_scores = all_submissions.map((submission) => submission.points);
+	let all_scores = all_submissions.map((submission) => submission.points);
+	// arrange all scores depending on whether lower is better or not
+	if (lower_is_better) {
+		all_scores = all_scores.sort((a, b) => a - b);
+	} else {
+		all_scores = all_scores.sort((a, b) => b - a);
+	}
 
 	// find the level where the range contains the student score
 
-	
+
 	const exerciseDeadlinePassed = (exercise_deadline: string) => {
 		const deadline = new Date(exercise_deadline);
 		const now = new Date();
@@ -32,6 +39,25 @@ const StudentBoard = () => {
 	};
 
 	return (
+		<div>
+		<h1
+				style={{
+					backdropFilter: 'blur(2px)',
+					// opacity: 0.9,
+					display: 'inline-block',
+					textAlign: 'center',
+					margin: '0 auto',
+					width: '100%',
+					// give it a shadow
+					// textShadow: '0 0 10px rgba(0,0,0,0.5)',
+					// stylize the header to be more visible
+					fontWeight: 'bold',
+
+					// color: 'white',
+				}}>
+				{' '}
+				Available Statistics for assignment {exercise.id}
+			</h1>
 		<div
 			// className='container'
 			style={{
@@ -40,55 +66,52 @@ const StudentBoard = () => {
 				margin: '1rem',
 				padding: '1rem',
 				borderRadius: '1rem',
-				backgroundImage: `url(${background})`,
+				// give it a gradient background that reflects their current level colors
+				background: `linear-gradient(45deg, ${levels[your_range_details?.id || 0]?.colors[0] || "white"} 30%, ${levels[your_range_details?.id || 0]?.colors[1] || "#222"
+				} 90%)`,
+				// backgroundImage: `url(${background})`,
 				backgroundSize: 'cover',
 				backgroundPosition: 'center',
 				boxShadow: '0 0 10px rgba(0,0,0,0.5)',
 			}}>
-			<h1
-				style={{
-					backdropFilter: 'blur(2px)',
-					// opacity: 0.9,
-					display: 'inline-block',
-					// color: 'white',
-				}}>
-				{' '}
-				{assignment_name} - Dashboard
-			</h1>
+			
 
-			{(!exerciseDeadlinePassed(exercise_deadline) && (
-				<BeforeDeadlineDisplay
-					exercise_deadline={exercise_deadline}
-					your_best_score={your_best_submission?.points || 0}
-					all_scores={all_scores}
-					levels={levels}
-				/>
-			)) || (
-				<>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							height: 'fit-content',
-							width: '100%',
-						}}>
+			{(!exerciseDeadlinePassed(exercise_deadline)
+				// {(true
+				&& (
+					<BeforeDeadlineDisplay
+						exercise_deadline={exercise_deadline}
+						lower_is_better={lower_is_better}
+						your_best_score={your_best_submission?.points || 0}
+						all_scores={all_scores}
+						levels={levels}
+					/>
+				)) || (
+					<>
 						<div
 							style={{
 								display: 'flex',
-								flex: 1,
-								flexDirection: 'column', // maintain
-								columnWidth: '100%',
+								flexDirection: 'row',
 								height: 'fit-content',
-								columnCount: 2, // number of columns
-								columnGap: '1rem', // space between columns
+								width: '100%',
 							}}>
-							<StudentStats
-								your_best_score={your_best_submission?.points || 0}
-								rangeDetails={your_range_details || undefined}
-							/>
-							<ProgressBar />
-						</div>
-						{/* <div
+							<div
+								style={{
+									display: 'flex',
+									flex: 1,
+									flexDirection: 'column', // maintain
+									columnWidth: '100%',
+									height: 'fit-content',
+									columnCount: 2, // number of columns
+									columnGap: '1rem', // space between columns
+								}}>
+								<StudentStats
+									your_best_score={your_best_submission?.points || 0}
+									rangeDetails={your_range_details || undefined}
+								/>
+								<ProgressBar />
+							</div>
+							{/* <div
 					style={{
 						display: 'flex',
 						flexDirection: 'column',
@@ -97,19 +120,31 @@ const StudentBoard = () => {
 					<ScoreHistory />
 					<Reward />
 				</div> */}
-						{/* <div
-							style={{
-								display: 'flex',
-								flexDirection: 'column',
-								flex: 2,
-							}}>
-							<HighScores />
-						</div> */}
 
-						<ScoreChart />
-					</div>
-				</>
-			)}
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'column',
+									flex: 2,
+								}}
+								>
+
+								<ScoreChart />
+							</div>
+								{your_best_submission?.points && all_scores && all_scores.length > 50 && all_scores.indexOf(your_best_submission.points) < 50 && (
+									<div
+										style={{
+											display: 'flex',
+											flexDirection: 'column',
+											flex: 0.5,
+										}}>
+										<HighScores />
+									</div>
+								)}
+						</div>
+					</>
+				)}
+		</div>
 		</div>
 	);
 };

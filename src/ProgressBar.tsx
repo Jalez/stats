@@ -93,7 +93,7 @@ const ProgressBar = () => {
 
 
 	const minScore = your_range_details.lower_limit || 0;
-	const maxScore = your_range_details.upper_limit || 0;
+	// const maxScore = your_range_details.upper_limit || 0;
 
 	const range = lower_is_better ? your_range_details.lower_limit - your_range_details.upper_limit :
 	your_range_details.upper_limit - your_range_details.lower_limit;
@@ -112,8 +112,6 @@ const ProgressBar = () => {
 	const LeftSideProgressToDegrees = (leftSideProgress / 50) * 180;
 	const RightSideProgressToDegrees = (rightSideProgress / 50) * 180;
 
-	console.log("Left side progress: ", LeftSideProgressToDegrees)
-	console.log("Right side progress: ", RightSideProgressToDegrees)
 
 		
 
@@ -171,6 +169,7 @@ const ProgressBar = () => {
 				style={{
 					fontSize: '1.2rem',
 					fontWeight: 'bold',
+					textAlign: 'center',
 				}}>
 					<p>
 

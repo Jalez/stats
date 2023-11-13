@@ -1,7 +1,7 @@
-import ObjectDisplayer from "./General/ObjectDisplayer";
-import useStore from "./zustand/store";
+import ObjectDisplayer from "../General/ObjectDisplayer";
+import useStore from "../zustand/store";
 
-const StateExerciseDisplayer = () => {
+const ExerciseDisplayer = () => {
     const {exercise} = useStore((state) => state);
 
     return(
@@ -12,4 +12,4 @@ const StateExerciseDisplayer = () => {
     )
 }
 
-export default StateExerciseDisplayer;
+export default ExerciseDisplayer;

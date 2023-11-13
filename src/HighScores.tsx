@@ -8,10 +8,10 @@ import useStore from './zustand/store';
 import crown from './assets/crown.svg';
 
 const HighScores = () => {
-	const { all_submissions, your_best_submission,  } = useStore((state) => state);
+	const { all_submissions, your_best_submission, lower_is_better  } = useStore((state) => state);
 
 	const all_points = all_submissions.map((submission) => submission.points);
-	const sortedScores = all_points.sort((a, b) => b - a);
+	const sortedScores = all_points.sort((a, b) => lower_is_better ? a - b : b - a);
 
 	if(!your_best_submission) return "No submission found, please submit your solution to see your position";
 
@@ -19,11 +19,22 @@ const HighScores = () => {
 
 	return (
 		<ShadowedContainer>
+			<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+				textAlign: 'center',
+			}}
+			>
+
 			<img src={crown} alt='crown' width={30} />
 			<h2>High Scores</h2>
 			<p>Your best score: {your_best_submission.points}</p>
 			<p>Position: {yourPosition}</p>
 
+			</div>
 			{/* Create a striped table of them */}
 			<table
 				className='table table-striped table-hover text-center'

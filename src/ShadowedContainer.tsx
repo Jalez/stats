@@ -12,6 +12,7 @@ const ShadowedContainer: React.FC<ShadowedContainerProps> = ({ children }) => {
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'center',
+				// height: 'fit-content',
 				// maxWidth: 'fit-content',
 				// maxHeight: '50%',
 				boxShadow: '0 0 10px rgba(0,0,0,0.5)',

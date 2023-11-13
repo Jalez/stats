@@ -1,5 +1,5 @@
-import ObjectDisplayer from "./General/ObjectDisplayer";
-import useStore from "./zustand/store"
+import ObjectDisplayer from "../General/ObjectDisplayer";
+import useStore from "../zustand/store"
 
 const StateSelectedStudentDisplayer = () => {
     const { your_best_submission, your_range_details, user_id } = useStore((state) => state);

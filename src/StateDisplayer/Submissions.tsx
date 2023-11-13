@@ -1,4 +1,4 @@
-import useStore from "./zustand/store"
+import useStore from "../zustand/store"
 
 const StateSubmissionsDisplayer = () => {
     const { all_submissions } = useStore((state) => state);
