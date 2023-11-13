@@ -3,6 +3,7 @@ import useStore from "../zustand/store";
 
 const ExerciseDisplayer = () => {
     const {exercise} = useStore((state) => state);
+    if(!exercise) return "No exercise found, please select an exercise to display";
 
     return(
         <>

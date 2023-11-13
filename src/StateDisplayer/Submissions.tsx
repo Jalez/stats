@@ -3,6 +3,8 @@ import useStore from "../zustand/store"
 const StateSubmissionsDisplayer = () => {
     const { all_submissions } = useStore((state) => state);
 
+    if(!all_submissions) return "No submissions found, please select an exercise to display";
+
     return (
         <>
         <p>
