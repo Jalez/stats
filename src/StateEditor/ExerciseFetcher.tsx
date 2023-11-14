@@ -3,13 +3,13 @@
 // Let's you change the exercise that is to be used in the app.
 
 // Store where the exercise is stored:
-import useStore from './zustand/store';
+import useStore from '../zustand/store';
 
 
 // Types
 import { useEffect, useState } from 'react';
-import { ValueChanger } from './General/ValueChanger';
-import getApiData from './utils/getApiData';
+import { ValueChanger } from '../General/ValueChanger';
+import getApiData from '../utils/getApiData';
 
 const ExerciseFetcher = () => {
     const exercise = useStore((state) => state.exercise);
@@ -22,7 +22,8 @@ const ExerciseFetcher = () => {
 
 
 		
-	const fetchExercise = async () => {
+	const fetchExercise = async (newExerciseId: number | string) => {
+
 		const getExercise = async (exercise_id: number) => {
 			// Give it a time out of 5 seconds before it gives up
 			const route = '/api/exercises/';
@@ -35,17 +36,13 @@ const ExerciseFetcher = () => {
 				setExercise(exerciseData);
 			}
 		}
-        console.log("newExerciseId", newExerciseId)
+        newExerciseId = Number(newExerciseId);
+        if (isNaN(newExerciseId)) newExerciseId = 0;
+
+
 		getExercise(newExerciseId);
     }
 
-    const handleNewExerciseId = (newExerciseId: number | string) => {
-        // attempt to convert the newExerciseId to a number
-        newExerciseId = Number(newExerciseId);
-        // if it is not a number, set it to 0
-        if (isNaN(newExerciseId)) newExerciseId = 0;
-        setNewExerciseId(newExerciseId);
-    }
 
     return (
         <div
@@ -63,16 +60,10 @@ const ExerciseFetcher = () => {
                    <ValueChanger 
                     value={newExerciseId}
                     label="Update exercise id"
-                    onSubmit={handleNewExerciseId}
+                    onSubmit={fetchExercise}
 
                     />
-            {/* Add a button to save the new exercise */}
-            <button
-                className='btn btn-primary'
-                onClick={
-                    fetchExercise}>
-                Update exercise
-            </button>
+
 
             </div>
     );

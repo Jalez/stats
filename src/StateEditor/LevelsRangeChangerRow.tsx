@@ -1,4 +1,4 @@
-import { range } from "./types";
+import { range } from "../types";
 
 interface LevelsRangeChangerRowProps  {
     range: range,

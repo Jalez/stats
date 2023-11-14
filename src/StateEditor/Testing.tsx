@@ -1,7 +1,8 @@
 /** @format */
 
-import useStore, { useNotificationStore } from './zustand/store';
-import { ValueChanger } from './General/ValueChanger';
+import useStore, { useNotificationStore } from '../zustand/store';
+import { ValueChanger } from '../General/ValueChanger';
+import ErrorMessage from '../General/ErrorMessage';
 const Testing = () => {
 	const { changeUser, user_id, your_best_submission, updateSubmission } =
 		useStore((state) => state);
@@ -38,7 +39,7 @@ const Testing = () => {
 		updateSubmission(
 			{
 				points: newYourBestScore,
-				aplus_id: user_id,
+				aplus_id: user_id || 0,
 				exercise: your_best_submission?.exercise || 0,
 				_order: your_best_submission?._order || 0,
 			}
@@ -49,10 +50,20 @@ const Testing = () => {
 		setNotificationType('info');
 	};
 
+	if(!user_id) {
+		return (
+
+			<ErrorMessage>
+			No user id found, please change the id to use another user
+		</ErrorMessage>
+			)
+	}
+
 	return (
 		<>
-			<h3>Testing Tools</h3>
+			<h3>Updating selected user</h3>
 
+			
 			<ValueChanger
 				label='Change user id'
 				onSubmit={handleUserIdChange}

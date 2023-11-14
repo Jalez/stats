@@ -1,4 +1,4 @@
-import FormGroup from "./General/FormGroup"
+import FormGroup from "../General/FormGroup"
 
 const LevelsRangeUpdater = () => {
 

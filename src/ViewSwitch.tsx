@@ -5,7 +5,7 @@ const ViewSwitch = () => {
 	const { setNotification } = useNotificationStore((state) => state);
 
 	const handleSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setViewerType(e.target.checked ? 'student' : 'teacher');
+		setViewerType(e.target.checked ? 'teacher' : 'student');
 		setNotification('TESTING TOOLS: Viewer type updated to ' + viewer_type);
 
 	};
@@ -20,7 +20,7 @@ const ViewSwitch = () => {
 			/>
 			<label className='form-check-label' htmlFor='testModeSwitch'>
 				{/* Teacher or Student */}
-				{viewer_type === 'student' ? 'Student' : 'Teacher'}
+				{viewer_type === 'student' ? 'Display State manager' : 'Display Student view'}
 			</label>
 			{/* Add a user_id input changer */}
 		</div>

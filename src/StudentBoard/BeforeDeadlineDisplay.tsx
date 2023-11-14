@@ -1,8 +1,8 @@
 /** @format */
 
-import ShadowedContainer from './ShadowedContainer';
-import { Level } from './types';
-import dateSanitizer from './utils/dateSanitizer';
+import ShadowedContainer from '../StyledComponents/ShadowedContainer';
+import { Level } from '../types';
+import dateSanitizer from '../utils/dateSanitizer';
 
 interface BeforeDeadlineDisplayProps {
 	exercise_deadline: string;

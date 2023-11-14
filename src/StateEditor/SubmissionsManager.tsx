@@ -1,11 +1,11 @@
 /** @format */
 
 import { useState } from 'react';
-import FormGroup from './General/FormGroup';
-import useStore from './zustand/store';
-import { useNotificationStore } from './zustand/store';
+import FormGroup from '../General/FormGroup';
+import useStore from '../zustand/store';
+import { useNotificationStore } from '../zustand/store';
 const SubmissionManager = () => {
-	const { addNewSubmission, setAllSubmissions } = useStore((state) => state);
+	const { addNewSubmission } = useStore((state) => state);
 	const setNotification = useNotificationStore(
 		(state) => state.setNotification
 	);
@@ -79,21 +79,7 @@ const SubmissionManager = () => {
 					</button>
 			</form>
 			{/* Add a button to fetch scores from the database */}
-			<FormGroup label='Fetch Scores' id='allScores'>
-				<button
-					className='btn btn-primary'
-					onClick={() => {
-						fetch('/api/scores')
-							.then((res) => res.json())
-							.then((data) => {
-								setAllSubmissions(data);
-							});
-					}}>
-					Fetch from Database
-				</button>
-			</FormGroup>
-			{/* Update level ranges based on all scores*/}
-		
+
 		</div>
 	);
 };

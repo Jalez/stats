@@ -4,9 +4,10 @@ import './ProgressBar.css';
 
 import styled, { keyframes } from 'styled-components';
 import { HTMLAttributes, useEffect } from 'react';
-import useStore, { useNotificationStore } from './zustand/store';
-import ShadowedContainer from './ShadowedContainer';
-
+import useStore, { useNotificationStore } from '../zustand/store';
+import ShadowedContainer from '../StyledComponents/ShadowedContainer';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css'
 const rotate = (degrees: string) => keyframes`
 	0% {
 		transform: rotate(0deg);
@@ -35,24 +36,19 @@ const RotatingSpan = styled.span<RotatingSpanProps>`
 const ProgressBar = () => {
 	const student_score = useStore((state 
 		) => state.your_best_submission?.points || 0);
-	const all_submissions = useStore((state) => state.all_submissions);
 	const your_range_details = useStore((state) => state.your_range_details);
 	const your_level_details = useStore((state) => state.your_level_details);
-	if (!all_submissions) return "No submissions found, please select an exercise that has submissions in the api to see student progress";
-	const scores = all_submissions?.map((submission) => submission.points);
+	const isLoadingRanges = useStore((state) => state.isLoadingRanges);
+	const isLoadingSubmissions = useStore((state) => state.isLoadingSubmissions);
+
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
 	);
 	const lower_is_better = useStore((state) => state.lower_is_better);
 
     useEffect(() => {
-        if (scores.length === 0) {
-			console.log("No scores found")
-            setNotification(
-                "Your position can't be estimated yet because there are no other scores available at this time."
-            );
-            setNotificationType('info');
-        } else if (!student_score) {
+		console.log("useEffect")
+		 if (!student_score) {
 			console.log("No student score found")
             setNotification(
 				"Your position can't be estimated yet because there are no scores available at this time."
@@ -68,8 +64,47 @@ const ProgressBar = () => {
     }, [student_score, your_range_details]);
 
 
+	if (isLoadingRanges || isLoadingSubmissions) return 
+	(<ShadowedContainer>
+		<h2
+		style={{
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+			justifyContent: 'center',
+			textAlign: 'center',
+		}}
+		>Progress</h2>
+		<Skeleton
+	
+		 style={{
+			display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+			width: "150px",
+			height: "150px",
+			lineHeight: "150px",
+			// background: "none",
+			margin: "0 auto",
+			boxShadow: "none",
+			position: "relative",
+		 }}
+		/>
+		<Skeleton
+			count={2}
+			style={{
+
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+				textAlign: 'center',
+			}}
+		/>
+	</ShadowedContainer>)
 
 
+	
 
 	if(!student_score){
 		return null;
@@ -106,8 +141,20 @@ const ProgressBar = () => {
 
 
 	return (
+		
 		<ShadowedContainer>
+			<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				justifyContent: 'center',
+				textAlign: 'center',
+			}}
+			>
+				
 			<h2>Progress</h2>
+			
 			<div
 				// className='col-md-3 col-sm-6'
 				style={{
@@ -128,7 +175,7 @@ const ProgressBar = () => {
 							color={your_level_details?.colors[0]}></RotatingSpan>
 						{/* <span
 							className='progress-bar'
-							style={{ borderColor: levelDetails?.colors[0] }}></span> */}
+						style={{ borderColor: levelDetails?.colors[0] }}></span> */}
 					</span>
 					<span className='progress-right'>
 						<RotatingSpan
@@ -148,9 +195,9 @@ const ProgressBar = () => {
 								position: 'absolute',
 								transform: 'translateX(-50%) translateY(-01%)',
 								zIndex: 1,
-
+								
 							}}
-						/>
+							/>
 					</div>
 				</div>
 			</div>
@@ -163,7 +210,7 @@ const ProgressBar = () => {
 				}}>
 					<p>
 
-					Next level at: {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0}
+					Next level at: {lower_is_better ? (Number(your_range_details.lower_limit) -1) : (Number(your_range_details.upper_limit)+1) || 0}
 					</p>
 					<p>
 					Your current score: {student_score}
@@ -171,6 +218,10 @@ const ProgressBar = () => {
 				 {/* - {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0} */}
 			</span>
 			<span>
+				{your_level_details?.level == 6 ? 
+				"You are at the highest level. Congratulations!"
+				: (
+					<>
 				{' '}
 				You need <strong>{
 					progressToNextLevel
@@ -179,9 +230,12 @@ const ProgressBar = () => {
 				 score
 
 				to level up.
+				</>
+				)}
 			</span>
 			<div>
 
+				</div>
 			</div>
 		</ShadowedContainer>
 	);

@@ -2,21 +2,25 @@
 
 // Show the 5 best scores
 
-import ShadowedContainer from './ShadowedContainer';
-import useStore from './zustand/store';
+import ShadowedContainer from '../StyledComponents/ShadowedContainer';
+import useStore from '../zustand/store';
 
-import crown from './assets/crown.svg';
+import crown from '../assets/crown.svg';
 
 const HighScores = () => {
 	const { all_submissions, your_best_submission, lower_is_better  } = useStore((state) => state);
-
 	if(!all_submissions) return "No submissions found with the given exercise id.";
+	if(!your_best_submission) return "No submission found, please submit your solution to see your position";
+	
+	if(!all_submissions || !your_best_submission) return null;
 	const all_points = all_submissions?.map((submission) => submission.points);
 	const sortedScores = all_points?.sort((a, b) => lower_is_better ? a - b : b - a);
-
-	if(!your_best_submission) return "No submission found, please submit your solution to see your position";
-
 	const yourPosition = sortedScores.indexOf(your_best_submission?.points) + 1;
+	// The moment the student sees highscores for the first time, add a cookie that will remember that he has seen it
+	const seenHighScores = localStorage.getItem('seenHighScores');
+	if (!seenHighScores) {
+		localStorage.setItem('seenHighScores', 'true');
+	}
 
 	return (
 		<ShadowedContainer>
@@ -84,18 +88,14 @@ const HighScores = () => {
 						<tr>
 							<td
 								style={{
-									// bolden if it's your score
 									fontWeight: 'bold',
-									// Make bigger if it's your score
 									fontSize: '1.3rem',
 								}}>
 								{yourPosition}
 							</td>
 							<td
 								style={{
-									// bolden if it's your score
 									fontWeight: 'bold',
-									// Make bigger if it's your score
 									fontSize: '1.3rem',
 								}}>
 								{your_best_submission.points}

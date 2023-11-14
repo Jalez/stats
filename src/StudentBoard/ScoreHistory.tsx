@@ -1,7 +1,7 @@
 /** @format */
 
-import LineChart from './General/LineChart';
-import ShadowedContainer from './ShadowedContainer';
+import LineChart from '../General/LineChart';
+import ShadowedContainer from '../StyledComponents/ShadowedContainer';
 
 const ScoreHistory = () => {
 	return (

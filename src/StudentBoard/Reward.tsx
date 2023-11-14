@@ -1,7 +1,7 @@
 /** @format */
 
-import ShadowedContainer from './ShadowedContainer';
-import useStore from './zustand/store';
+import ShadowedContainer from '../StyledComponents/ShadowedContainer';
+import useStore from '../zustand/store';
 
 const Reward = () => {
 	const { your_best_submission, levels, ranges } = useStore((state) => state);

@@ -8,11 +8,12 @@ import level3Img from '../assets/level 3 - PB.png';
 import level4Img from '../assets/level 4 - AA.png';
 import level5Img from '../assets/level 5 - DSD.png';
 import level6Img from '../assets/level 6 - DSS.png';
+import getApiData from '../utils/getApiData';
 
 
 export type StoreState = {
 	exercise: exercise | undefined;
-	user_id: number;
+	user_id: number | undefined;
 	data_from_lti: Record<string, string>;
 	ranges: range[] | undefined;
 	levels: Level[];
@@ -23,6 +24,9 @@ export type StoreState = {
 	your_level_details: Level | undefined;
 	all_submissions: submission[] | undefined;
 	lower_is_better: boolean;
+	isLoadingExercise: boolean;
+	isLoadingSubmissions: boolean;
+	isLoadingRanges: boolean;
 	// changeLevelRange: (level: number, range: number[]) => void;
 	setViewerType: (viewer_type: 'student' | 'teacher') => void;
 	setYourBestSubmission: (your_best_submission: submission) => void;
@@ -39,71 +43,28 @@ export type StoreState = {
 	setExercise: (exercise: exercise) => void;
 	setDataFromLti : (data_from_lti: Record<string, string>) => void;
 	updateYourLevelDetails: (range: range) => void;
+	setLoadingExercise: (isLoadingExercise: boolean) => void;
+	setLoadingSubmissions: (isLoadingSubmissions: boolean) => void;
+	setLoadingRanges: (isLoadingRanges: boolean) => void;
+	getRanges: (exercise_id: number) => void;
+	getExercise: (exercise_id: number) => void;
+	getSubmissions: (exercise_id: number) => void;
 };
 
-const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
-	return window.location.hostname === 'localhost' && localhostValue || releaseValue;  
-}
+// const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
+// 	return window.location.hostname === 'localhost' && localhostValue || releaseValue;  
+// }
 
 const useStore = create<StoreState>((set) => ({
 	exercise: undefined,
-	user_id: 99,
+	user_id: undefined,
 	data_from_lti: {},
-	ranges: [
-        {
-            "id": 1,
-            "upper_limit": 9223372036854775807,
-            "lower_limit": 104105,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 0,
-            "exercise": 1
-        },
-        {
-            "id": 2,
-            "upper_limit": 104105,
-            "lower_limit": 84908,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 20,
-            "exercise": 1
-        },
-        {
-            "id": 3,
-            "upper_limit": 84907,
-            "lower_limit": 27716,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 40,
-            "exercise": 1
-        },
-        {
-            "id": 4,
-            "upper_limit": 27715,
-            "lower_limit": 5562,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 60,
-            "exercise": 1
-        },
-        {
-            "id": 5,
-            "upper_limit": 5561,
-            "lower_limit": 3005,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 80,
-            "exercise": 1
-        },
-        {
-            "id": 6,
-            "upper_limit": 3004,
-            "lower_limit": -1,
-            "updated": "2023-11-01T12:29:17.167697+02:00",
-            "percentage": 100,
-            "exercise": 1
-        }
-    ],
+	ranges: undefined,
 	levels: [
 		{
 			level: 1,
 			name: 'Bug squasher',
-			colors: ['#fef2ca', '#318874'],
+			colors: ['#318874', '#fef2ca'],
 			badge: level1Img,
 			percentage: 0,
 		},
@@ -145,12 +106,24 @@ const useStore = create<StoreState>((set) => ({
 	],
 	all_submissions: undefined,
 	lower_is_better: true,
-	selected_student: 0, //The students id
-	viewer_type: returnIfLocalhost("teacher", "student") as 'student' | 'teacher',
+	selected_student: undefined, //The students id
+	viewer_type: 'student',
 	your_best_submission: undefined,
 	your_range_details: undefined,
 	your_level_details: undefined,
 	your_all_submissions: undefined,
+	isLoadingExercise: true,
+	isLoadingSubmissions: true,
+	isLoadingRanges: true,
+	setLoadingExercise: (isLoadingExercise: boolean) => {
+		set({ isLoadingExercise });
+	},
+	setLoadingSubmissions: (isLoadingSubmissions: boolean) => {
+		set({ isLoadingSubmissions });
+	},
+	setLoadingRanges: (isLoadingRanges: boolean) => {
+		set({ isLoadingRanges });
+	},
 	updateRanges: (ranges: {
 		id: number;
 		upper_limit: number;
@@ -254,31 +227,12 @@ const useStore = create<StoreState>((set) => ({
 				return level.percentage === range.percentage;
 			}),
 		}));
-	}
-	// checkLowerIsBetter: () => {
-	// 	set((state) => ({
-	// 		lower_is_better: state.levels[1].range[0] < state.levels[1].range[1],
-	// 	}));
-	// 	// call sortSubmissions to sort the submissions
-	// 	set((state) => ({
-	// 		all_submissions: state.all_submissions.sort((a, b) => {
-	// 			if (state.lower_is_better) {
-	// 				return a.points - b.points;
-	// 			} else {
-	// 				return b.points - a.points;
-	// 			}
-	// 		}),
-	// 	}));
-
-	// },
-	,
+	},
 	setRanges: (ranges: range[]) => {
 		console.log("setting ranges, ", ranges)
 		set({ ranges });
 	},
-	changeUser: (user_id: number) => {
-		// set the user_id and then call searchForYourBestSubmission to find the best submission
-		
+	changeUser: (user_id: number) => {		
 		set({ user_id });
 	},
 	setExercise: (exercise: exercise) => {
@@ -288,6 +242,52 @@ const useStore = create<StoreState>((set) => ({
 		set({ data_from_lti });
 	},
 
+	getRanges: async (exercise_id: number) => {
+		// Give it a time out of 5 seconds before it gives up
+		console.log("getting ranges")
+		set({ isLoadingRanges: true });
+		const route = '/api/ranges/?exercise=' + exercise_id;
+		const data = await getApiData(route);
+		if (data) {
+			const results = data.results;
+			// get the last 6 ranges
+			const lastSixRanges = results.slice(-6);
+			set({ ranges: lastSixRanges });
+			set({ isLoadingRanges: false });
+		}
+	},
+	getSubmissions: async (exercise_id: number) => {
+		console.log("getting submissions")
+		// Give it a time out of 5 seconds before it gives up
+		set({ isLoadingSubmissions: true });
+		const route = '/api/submissions/?exercise=' + exercise_id;
+		let data = await getApiData(route);
+		if (data) {
+			const submissions = data.results;
+			while (data.next) {
+				//Add s after "http" in the next url, but only if we are not running on localhost
+				if (window.location.href.indexOf("localhost") === -1) data.next = data.next.replace("http", "https");
+				data = await getApiData(data.next);
+				submissions.push(...data.results);
+			}
+			set({ all_submissions: submissions });
+			set({ isLoadingSubmissions: false });
+		}
+	},
+
+	getExercise: async (exercise_id: number) => {
+		console.log("getting exercise")
+		// Give it a time out of 5 seconds before it gives up
+		set({ isLoadingExercise: true });
+		const route = '/api/exercises/?exercise_id=' + exercise_id;
+		const data = await getApiData(route);
+		if (data?.results) {
+			const exerciseData = data.results[0];
+			set({ exercise: exerciseData });
+			set({ isLoadingExercise: false });
+
+		}
+	}
 
 }));
 

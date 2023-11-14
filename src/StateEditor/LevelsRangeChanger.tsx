@@ -3,12 +3,12 @@
 // Let's you change the ranges and names of levels that are to be used in the app.
 
 // Store where the levels are stored:
-import useStore from './zustand/store';
+import useStore from '../zustand/store';
 
 // Types
 import { useEffect, useState } from 'react';
 import LevelsRangeChangerRow from './LevelsRangeChangerRow';
-import { range } from './types';
+import { range } from '../types';
 
 const LevelsRangeChanger = () => {
 	const ranges = useStore((state) => state.ranges);

@@ -1,5 +1,5 @@
 import TabbedContent from "../General/TabbedContent";
-import ShadowedContainer from "../ShadowedContainer";
+import ShadowedContainer from "../StyledComponents/ShadowedContainer";
 import StateExerciseDisplayer from "./Exercise";
 import StateLevelsDisplayer from "./Levels";
 import Lti from "./Lti";
