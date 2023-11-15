@@ -59,7 +59,7 @@ const ScoreChart: React.FC = () => {
 		// Initialize a dataset for each level with an array of zeros
 		const datasets = levels.map(level => {
 			return {
-				label: `Level ${level.level}`,
+				label: `lvl ${level.level}\n(${level.percentage/100 * 250} p)`,
 				data: new Array(ranges.length).fill(0), // Initialize with zeros for each range
 				backgroundColor: level.colors[0],
 			};

@@ -2,13 +2,23 @@
 
 import { create } from 'zustand';
 import { Level, exercise, range, submission, viewer_type } from '../types';
-import level1Img from '../assets/level 1 - BS.png';
-import level2Img from '../assets/level 2 - CM.png';
-import level3Img from '../assets/level 3 - PB.png';
-import level4Img from '../assets/level 4 - AA.png';
-import level5Img from '../assets/level 5 - DSD.png';
-import level6Img from '../assets/level 6 - DSS.png';
+
 import getApiData from '../utils/getApiData';
+
+import level1bkrn from '../assets/level 1 - BKRND.png';
+import level2bkrn from '../assets/level 2 - BKRND.png';
+import level3bkrn from '../assets/level 3 - BKRND.png';
+import level4bkrn from '../assets/level 4 - BKRND.png';
+import level5bkrn from '../assets/level 5 - BKRND.png';
+import level6bkrn from '../assets/level 6 - BKRND.png';
+
+import beetle from '../assets/beetle.png';
+import monkey from '../assets/monkey.png';
+import bottle from '../assets/bottle.png';
+import wizardHat1 from '../assets/wizardhat-1.png';
+import wizardHat2 from '../assets/wizardhat-2.png';
+import wizardHat3 from '../assets/wizardhat-3.png';
+
 
 
 export type StoreState = {
@@ -65,42 +75,61 @@ const useStore = create<StoreState>((set) => ({
 			level: 1,
 			name: 'Bug squasher',
 			colors: ['#318874', '#fef2ca'],
-			badge: level1Img,
+			badge: {
+				foreground: beetle,
+				background: level1bkrn,
+			},
 			percentage: 0,
 		},
 		{
 			level: 2,
 			name: 'Code monkey',
 			colors: ['#415b5e', '#fde5b4'],
-			badge: level2Img,
+			badge: {
+				foreground: monkey,
+				background: level2bkrn,
+			},
 			percentage: 20,
 		},
 		{
 			level: 3,
 			name: 'Performance brewer',
 			colors: ['#fe6a77', '#a38271'],
-			badge: level3Img,
+			badge: {
+				foreground: bottle,
+				background: level3bkrn,
+			},
 			percentage: 40,
 		},
 		{
 			level: 4,
 			name: 'Algorithmic alchemist',
 			colors: ['#8f476a', '#b28869'],
-			badge: level4Img,
+			badge: {
+				foreground: wizardHat1,
+				background: level4bkrn,
+			},
 			percentage: 60,
 		},
 		{
 			level: 5,
 			name: 'Data Structure druid',
 			colors: ['#5f877d', '#5f877d'],
-			badge: level5Img,
+			badge: {
+				foreground: wizardHat2,
+				background: level5bkrn,
+			
+			},
 			percentage: 80,
 		},
 		{
 			level: 6,
 			name: 'Binary sorcerer supreme',
 			colors: ['#ffe6ab', '#2a293c'],
-			badge: level6Img,
+			badge: {
+				foreground: wizardHat3,
+				background: level6bkrn,
+			},
 			percentage: 100,
 		},
 	],
@@ -250,9 +279,9 @@ const useStore = create<StoreState>((set) => ({
 		const data = await getApiData(route);
 		if (data) {
 			const results = data.results;
-			// get the last 6 ranges
-			const lastSixRanges = results.slice(-6);
-			set({ ranges: lastSixRanges });
+			// get the first 6 ranges
+			const firstSixRanges = results.slice(0, 6);
+			set({ ranges: firstSixRanges });
 			set({ isLoadingRanges: false });
 		}
 	},

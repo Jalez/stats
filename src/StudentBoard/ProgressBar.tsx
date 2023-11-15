@@ -8,6 +8,7 @@ import useStore, { useNotificationStore } from '../zustand/store';
 import ShadowedContainer from '../StyledComponents/ShadowedContainer';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
+import HoverImage from '../StyledComponents/HoverImage';
 const rotate = (degrees: string) => keyframes`
 	0% {
 		transform: rotate(0deg);
@@ -121,6 +122,11 @@ const ProgressBar = () => {
 	if (!your_range_details) {
 		return null;
 	}
+
+	if(!your_level_details){
+		return null;
+	}
+
 		
 
 	const minScore = your_range_details.lower_limit || 0;
@@ -163,6 +169,7 @@ const ProgressBar = () => {
 					alignItems: 'center',
 					justifyContent: 'center',
 					width: '100%',
+					overflow: "visible",
 					// backgroundColor: 'black',
 				}}>
 				<div className='progress blue'>
@@ -186,59 +193,73 @@ const ProgressBar = () => {
 							color={your_level_details?.colors[0]}></RotatingSpan>
 					</span>
 					<div className='progress-value'>
-						<img
+						<div
+						style={{
+							position: 'absolute',
+							transform: 'translateY(-00%)',
+							zIndex: 1,
+							
+						}}
+						>
+							<HoverImage
+							backgroundImage={your_level_details.badge.background}
+							foregroundImage={your_level_details.badge.foreground}
+							backgroundImageSize={135}
+							foregroundImageSize={100}
+
+							 
+							/>
+						</div>
+						{/* <img
 							src={your_level_details?.badge}
 							alt='level 4'
 							width={140}
 							height={140}
-							style={{
-								position: 'absolute',
-								transform: 'translateX(-50%) translateY(-01%)',
-								zIndex: 1,
-								
-							}}
-							/>
+							
+							/> */}
 					</div>
 				</div>
 			</div>
-			<span>Progress:</span>
+			{your_level_details?.level == 6 ? 
+				"You have reached the highest level. Congratulations!"
+				: (
+					<>
 			<span
 				style={{
 					fontSize: '1.2rem',
-					fontWeight: 'bold',
 					textAlign: 'center',
 				}}>
 					<p>
+<strong>
 
-					Next level at: {lower_is_better ? (Number(your_range_details.lower_limit) -1) : (Number(your_range_details.upper_limit)+1) || 0}
-					</p>
-					<p>
-					Your current score: {student_score}
+					Next level at: {" "}
+</strong>
+					
+					{lower_is_better ? (Number(your_range_details.lower_limit) -1) : (Number(your_range_details.upper_limit)+1) || 0}
 					</p>
 				 {/* - {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0} */}
 			</span>
 			<span>
-				{your_level_details?.level == 6 ? 
-				"You are at the highest level. Congratulations!"
-				: (
+				
 					<>
 				{' '}
 				You need <strong>{
-					progressToNextLevel
+					progressToNextLevel+1
 				} </strong>
 				{lower_is_better ? ' less ' : ' more '}
 				 score
 
 				to level up.
 				</>
-				)}
 			</span>
+				</>
+				)}
 			<div>
 
 				</div>
 			</div>
 		</ShadowedContainer>
-	);
+		);
 };
 
 export default ProgressBar;

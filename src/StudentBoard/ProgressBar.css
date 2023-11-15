@@ -7,6 +7,7 @@
 	margin: 0 auto;
 	box-shadow: none;
 	position: relative;
+	overflow:visible;
 }
 .progress:after {
 	content: '';

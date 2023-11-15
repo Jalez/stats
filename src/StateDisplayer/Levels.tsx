@@ -1,3 +1,4 @@
+import HoverImage from "../StyledComponents/HoverImage";
 import useStore from "../zustand/store";
 
 const StateLevelsDisplayer = () => {
@@ -27,13 +28,13 @@ const StateLevelsDisplayer = () => {
                             <td>{level}</td>
                             <td>{details.name}</td>
                             <td>
-                                <img
-                                width={40}
-                                height={40}
-                                    src={details.badge}
-                                    alt={details.name}
-                                    // style={{ width: '10rem' }}
+                                <HoverImage
+                                 backgroundImage={details.badge.background}
+                                    foregroundImage={details.badge.foreground}
+                                    backgroundImageSize={40}
+                                    foregroundImageSize={30}
                                 />
+        
                             </td>
 
                         </tr>

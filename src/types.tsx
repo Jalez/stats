@@ -4,7 +4,10 @@ export type Level = {
 	level: number;
 	name: string;
 	colors: string[];
-	badge: string;
+	badge: {
+		background: string;
+		foreground: string;
+	};
 	percentage: number;
 };
 

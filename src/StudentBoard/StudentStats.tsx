@@ -15,6 +15,8 @@ const StudentStats = () => {
 		flexDirection: "column",
 		alignItems: "center",
 		textAlign: "center",
+		// text size is 1.5rem
+		fontSize: "1.3rem",
 	}
 	const { your_best_submission, your_level_details, isLoadingSubmissions } = useStore((state) => state);
 
@@ -22,21 +24,40 @@ const StudentStats = () => {
 	return (
 		<ShadowedContainer>
 			<h2
-			 	style={textCenter}
-			>General</h2>
+				style={{
+					...textCenter,
+					fontSize: "2rem",
+
+				}}
+
+			>Status</h2>
 			{isLoadingSubmissions ? (
 
 				<Skeleton
-					count={3}
+					count={1}
 					style={textCenter}
 				/>
 			) : (
 
 				<div style={textCenter}>
-					<p>Best Score: {your_best_score == -1 ? "N/A" : your_best_score}</p>
-					<p>Level: {your_level_details?.level || "N/A"}</p>
 					<p>
-						Reward: {your_level_details && <strong>{(your_level_details.percentage / 100) * 250 + " points"}</strong> || "N/A"}
+
+						<span>Best Score:
+							<strong>
+								{your_best_score == -1 ? "N/A" : your_best_score}
+							</strong>
+						</span> |{" "}
+						<span>Level:
+							<strong>
+								{your_level_details?.level || "N/A"}
+							</strong>
+						</span> | {" "}
+						<span>
+							Reward: 
+							<strong>
+								{your_level_details &&(your_level_details.percentage / 100) * 250 + " points" || "N/A"}
+								</strong>
+						</span>
 					</p>
 				</div>
 			)}

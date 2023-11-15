@@ -57,15 +57,19 @@ const StudentBoard = () => {
 				color2={your_level_details?.colors[1] || '#222'}
 			> */}
 			<FlexContainer>
-				<FlexColumn flex={1}>
-					<StudentStats />
-					<ProgressBar />
+				{
+					your_best_submission?.points &&
 
-				</FlexColumn>
+					<FlexColumn flex={1}>
+						<ProgressBar />
+
+					</FlexColumn>
+				}
 				<FlexColumn flex={3}>
 
 
 
+					<StudentStats />
 					<ScoreChart />
 
 				</FlexColumn>
@@ -76,6 +80,7 @@ const StudentBoard = () => {
 						<HighScores />
 					</FlexColumn>
 				)}
+
 			</FlexContainer>
 			{/* </GradientContainer> */}
 		</>
