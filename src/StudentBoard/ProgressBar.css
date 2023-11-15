@@ -72,9 +72,6 @@
 	left: 5%;
 }
 
-.progress.blue .progress-left .progress-bar {
-	/* animation: loading-2 1.5s linear forwards 1.8s; */
-}
 
 @keyframes loading-1 {
 	0% {

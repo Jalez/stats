@@ -14,6 +14,7 @@ type ViewProps = {
  */
 const View = ({ for: viewer_type, children }: ViewProps) => {
 	const viewer_type_store = useStore((state) => state.viewer_type);
+
 	if (viewer_type_store === viewer_type) {
 		return <>{children}</>;
 	}
