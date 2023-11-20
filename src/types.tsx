@@ -23,14 +23,14 @@ export type range = {
 	lower_limit: number;
 	updated: string;
 	percentage: number;
-	exercise: number;
+	exercise_id: number;
 };
 
 export type submission = {
-	aplus_id: number
-	points: number,
-	_order: number,
-	exercise: number
+	aplus_id?: number;
+	points: number;
+	_order?: number;
+	exercise?: number;
 }
 
 export type exercise = {
@@ -39,7 +39,7 @@ export type exercise = {
 	deadline: string;
 	number_of_ranges: number;
 	lower_is_better: boolean;
-	course: number;
+	course?: number;
 };
 
 export type viewer_type = 'student' | 'teacher';

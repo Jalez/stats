@@ -3,8 +3,10 @@ const getApiData = async (url: string) => {
 	const signal = controller.signal;
 	setTimeout(() => controller.abort(), 5000);
 	try {
-		const response = await fetch(url, { signal });
+		// withCredentials set to true is needed for the api to work
+		const response = await fetch(url, { signal, credentials: 'include' });
 		const contentType = response.headers.get('content-type')
+
 		if (contentType && contentType.includes("application/json")) {
 			const data = await response.json();
 			return data;

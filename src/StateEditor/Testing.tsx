@@ -2,9 +2,8 @@
 
 import useStore, { useNotificationStore } from '../zustand/store';
 import { ValueChanger } from '../General/ValueChanger';
-import ErrorMessage from '../General/ErrorMessage';
 const Testing = () => {
-	const { changeUser, user_id, your_best_submission, updateSubmission } =
+	const { changeUser, user_id, your_best_submission, updateYourSubmission } =
 		useStore((state) => state);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
@@ -28,36 +27,21 @@ const Testing = () => {
 	}
 
 	const updateScore = (
-		newYourBestScore: number | string | undefined
+		newYourBestSubmission: number | string | undefined
 	) => {
 		// should be a number
-		if (newYourBestScore === undefined) return;
-		if (typeof newYourBestScore === 'string') {
-			newYourBestScore = parseInt(newYourBestScore);
+		if (newYourBestSubmission === undefined) return;
+		if (typeof newYourBestSubmission === 'string') {
+			newYourBestSubmission = parseInt(newYourBestSubmission);
 		}
 
-		updateSubmission(
-			{
-				points: newYourBestScore,
-				aplus_id: user_id || 0,
-				exercise: your_best_submission?.exercise || 0,
-				_order: your_best_submission?._order || 0,
-			}
-
-		)
+		updateYourSubmission({ ...your_best_submission, points: newYourBestSubmission });
 
 		setNotification('TESTING TOOLS: State updated');
 		setNotificationType('info');
 	};
 
-	if(!user_id) {
-		return (
 
-			<ErrorMessage>
-			No user id found, please change the id to use another user
-		</ErrorMessage>
-			)
-	}
 
 	return (
 		<>
@@ -67,7 +51,7 @@ const Testing = () => {
 			<ValueChanger
 				label='Change user id'
 				onSubmit={handleUserIdChange}
-				value={user_id}
+				value={user_id || 0}
 
 			/>
 

@@ -37,6 +37,7 @@ export type StoreState = {
 	isLoadingExercise: boolean;
 	isLoadingSubmissions: boolean;
 	isLoadingRanges: boolean;
+	isLoadingYourSubmission: boolean;
 	// changeLevelRange: (level: number, range: number[]) => void;
 	setViewerType: (viewer_type: 'student' | 'teacher') => void;
 	setYourBestSubmission: (your_best_submission: submission) => void;
@@ -48,8 +49,7 @@ export type StoreState = {
 	setRanges: (ranges: range[]) => void;
 	updateAllSubmissions: (submissions: submission[]) => void;
 	changeUser: (user_id: number) => void;
-	searchForYourBestSubmission: () => void;
-	updateSubmission: (submission: submission) => void;
+	updateSubmission: (newSubmission: submission, oldsubmission: submission) => void;
 	setExercise: (exercise: exercise) => void;
 	setDataFromLti : (data_from_lti: Record<string, string>) => void;
 	updateYourLevelDetails: (range: range) => void;
@@ -59,6 +59,8 @@ export type StoreState = {
 	getRanges: (exercise_id: number) => void;
 	getExercise: (exercise_id: number) => void;
 	getSubmissions: (exercise_id: number) => void;
+	getUserSubmission: (exercise_id: string) => void;
+	updateYourSubmission: (newSubmission: submission) => void;
 };
 
 // const returnIfLocalhost = (localhostValue: any, releaseValue: any) => {
@@ -144,6 +146,7 @@ const useStore = create<StoreState>((set) => ({
 	isLoadingExercise: true,
 	isLoadingSubmissions: true,
 	isLoadingRanges: true,
+	isLoadingYourSubmission: true,
 	setLoadingExercise: (isLoadingExercise: boolean) => {
 		set({ isLoadingExercise });
 	},
@@ -153,14 +156,7 @@ const useStore = create<StoreState>((set) => ({
 	setLoadingRanges: (isLoadingRanges: boolean) => {
 		set({ isLoadingRanges });
 	},
-	updateRanges: (ranges: {
-		id: number;
-		upper_limit: number;
-		lower_limit: number;
-		updated: string;
-		percentage: number;
-		exercise: number;
-	}[]) => {
+	updateRanges: (ranges: range[]) => {
 		// update the ranges in the backend
 		set({ ranges });
 	}
@@ -168,15 +164,12 @@ const useStore = create<StoreState>((set) => ({
 	setViewerType: (viewer_type: viewer_type) => {
 		set({ viewer_type });
 	},
-	setYourBestSubmission: (your_best_submission: submission) => {
-		set({ your_best_submission });
-	},
-	updateSubmission: (submission: submission) => {
+	updateSubmission: (newSubmission: submission, oldsubmission: submission) => {
 		// update the submission in the backend
 		set((state) => ({
 			all_submissions: state.all_submissions ? state.all_submissions.map((sub) => {
-				if (sub.aplus_id === submission.aplus_id) {
-					return submission;
+				if (sub === oldsubmission) {
+					return newSubmission;
 				} else {
 					return sub;
 				}
@@ -184,20 +177,27 @@ const useStore = create<StoreState>((set) => ({
 			
 		}));
 	},
-	// Create a function that sets me search and set the best submission
-	searchForYourBestSubmission: () => {
-		set((state) => ({
-			your_best_submission: state.all_submissions ? state.all_submissions.find((submission) => {
-				return submission.aplus_id === state.user_id;
-			}) : undefined,
-		}));
+	setYourBestSubmission: (your_best_submission: submission) => {
+		set({ your_best_submission });
+		set({ isLoadingYourSubmission: false });
 	},
+	// Create a function that sets me search and set the best submission
 	setAllSubmissions: (all_submissions: submission[]) => {
 		console.log("setting all submissions, ", all_submissions)
 		set({ all_submissions });
+		set({ isLoadingSubmissions: false });
 	},
 	setLevels: (levels: Level[]) => {
 		set({ levels });
+	},
+	setRanges: (ranges: range[]) => {
+		console.log("setting ranges, ", ranges)
+		set({ ranges });
+		set({ isLoadingRanges: false });
+	},
+	setExercise: (exercise: exercise) => {
+		set({ exercise });
+		set({ isLoadingExercise: false });
 	},
 	addNewSubmission: (submission: submission) => {
 		set((state) => ({
@@ -257,16 +257,11 @@ const useStore = create<StoreState>((set) => ({
 			}),
 		}));
 	},
-	setRanges: (ranges: range[]) => {
-		console.log("setting ranges, ", ranges)
-		set({ ranges });
-	},
+
 	changeUser: (user_id: number) => {		
 		set({ user_id });
 	},
-	setExercise: (exercise: exercise) => {
-		set({ exercise });
-	},
+
 	setDataFromLti : (data_from_lti: Record<string, string>) => {
 		set({ data_from_lti });
 	},
@@ -316,7 +311,26 @@ const useStore = create<StoreState>((set) => ({
 			set({ isLoadingExercise: false });
 
 		}
-	}
+	},
+	getUserSubmission: async (exercise_id: string) => {
+		console.log("getting user submissions")
+		// Give it a time out of 5 seconds before it gives up
+		set({ isLoadingYourSubmission: true });
+		const route = '/api/mystats/' + exercise_id;
+		let data = await getApiData(route);
+		console.log("mystats data: ", data)
+		if (data) {
+			
+			const submissions = data.points;
+			set({ your_best_submission: submissions });
+			set({ isLoadingYourSubmission: false });
+		}
+	},
+	updateYourSubmission: (newSubmission: submission) => {
+		set({
+			your_best_submission: newSubmission,
+		});
+	},
 
 }));
 

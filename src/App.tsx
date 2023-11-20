@@ -3,96 +3,59 @@
 import StudentBoard from './StudentBoard/StudentBoard';
 import View from './View';
 import useStore from './zustand/store';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ViewSwitch from './ViewSwitch';
 import StateDisplayer from './StateDisplayer/StateDisplayer';
 import StateEditor from './StateEditor/StateEditor';
+import { exercise, range, submission } from './types';
 
 
 declare global {
-	var GLOBAL_VARS: {
-		last_login?: string,
-		_auth_user_id?: string,
-		_auth_user_backend?: string,
-		_auth_user_hash?: string,
-		context_id?: string,
-		context_label?: string,
-		context_title?: string,
-		custom_context_api?: string,
-		custom_context_api_id?: string,
-		custom_user_api_token?: string,
-		exer_id?: string,
-		launch_presentation_document_target?: string,
-		launch_presentation_locale?: string,
-		launch_presentation_return_url?: string,
-		lis_person_contact_email_primary?: string,
-		lis_person_name_family?: string,
-		lis_person_name_full?: string,
-		lis_person_name_given?: string,
-		lti_message_type?: string,
-		lti_version?: string,
-		resource_link_id?: string,
-		resource_link_title?: string,
-		roles?: string,
-		tool_consumer_instance_description?: string,
-		tool_consumer_instance_guid?: string,
-		tool_consumer_instance_name?: string,
-		tool_consumer_instance_url?: string,
-		user_id?: string,
-		instructor?: boolean
+	var GLOBAL_DATA: {
+		course_id?: number,
+		exercise_id?: number,
+		instructor?: boolean,
+		exercise?: exercise,
+		ranges?: range[],
+		submissions?: submission[],
+		your_submission?: submission,
 	}
 }
 
-(window as any).GLOBAL_VARS = (window as any).GLOBAL_VARS || {};
+(window as any).GLOBAL_DATA = (window as any).GLOBAL_DATA || {};
 
 
 function App() {
-	const { exercise, getExercise, changeUser, setYourBestSubmission, calculateYourRangeDetails, getRanges, getSubmissions, setDataFromLti } = useStore(state => state)
-
-	const test_exercise_id = 42;
-	const [exerciseId, setExerciseId] = useState((window as any).GLOBAL_VARS.exer_id || test_exercise_id);
-	const { user_id, all_submissions, ranges } = useStore(state => state);
+	const {  calculateYourRangeDetails, setDataFromLti } = useStore(state => state)
+	const { setAllSubmissions, setExercise, setYourBestSubmission,setRanges  } = useStore(state => state);
 	useEffect(() => {
-		if (GLOBAL_VARS.instructor) {
-			console.log("Setting viewer type to teacher")
-			// setViewerType('teacher');
-		}
-		if (GLOBAL_VARS.user_id) {
-			// remove the i from the user_id
-			const newUserId = GLOBAL_VARS.user_id.slice(1);
-			changeUser(Number(newUserId));
-		}
-		if(GLOBAL_VARS.exer_id){
-			setExerciseId(GLOBAL_VARS.exer_id);
-		}
-		setDataFromLti(GLOBAL_VARS as any);
-	}, [GLOBAL_VARS])
+		if(!GLOBAL_DATA.exercise_id) return 
 
-	useEffect(() => {
-		const your_best_submission = all_submissions?.find(submission => submission.aplus_id === user_id);
-		if (your_best_submission) {
-			setYourBestSubmission(your_best_submission);
+		if(GLOBAL_DATA.exercise){
+			setExercise(GLOBAL_DATA.exercise);
+		}
+		if(GLOBAL_DATA.ranges){
+			setRanges(GLOBAL_DATA.ranges);
+		}
+		if(GLOBAL_DATA.submissions){
+			// GLOBAL_DATA.instructor && getSubmissions(GLOBAL_DATA.exercise_id);
+			console.log("Submissions", GLOBAL_DATA.submissions)
+			setAllSubmissions(GLOBAL_DATA.submissions);
+		}
+		if(GLOBAL_DATA.your_submission){
+			setYourBestSubmission(GLOBAL_DATA.your_submission);
 			calculateYourRangeDetails();
 		}
-	}, [all_submissions, user_id, ranges])
 
-	useEffect(() => {
-		getExercise(exerciseId);
-	}, [exerciseId]);
+		setDataFromLti(GLOBAL_DATA as any);
+	}, [GLOBAL_DATA])
 
-
-	useEffect(() => {
-		if (exercise) {
-			getRanges(exercise.id);
-			getSubmissions(exercise.id);
-		}
-	}, [exercise])
 
 	return (
 		<div className='container'>
 			{/* <Notification /> */}
 			{
-				GLOBAL_VARS.instructor ? <ViewSwitch /> : null
+				GLOBAL_DATA.instructor ? <ViewSwitch /> : null
 			}
 			<View for='teacher'>
 				<h1>
