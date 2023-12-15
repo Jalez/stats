@@ -7,11 +7,14 @@ interface FlexColumnProps {
 
 const FlexColumn = styled.div<FlexColumnProps>`
     display: flex;
+    min-width: fit-content;
+    max-width: 300px;
     flex: ${props => props.flex};
     flex-direction: column;
     column-width: 100%;
     column-count: 2;
     column-gap: 1rem;
+    overflow: hidden;
     //make sure children occupy the full height
     & > * {
         height: 100%;

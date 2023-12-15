@@ -5,6 +5,7 @@ const FlexContainer = styled.div`
     flex-direction: row;
     height: fit-content;
     width: 100%;
+    flex-wrap: wrap;
 `;
 
 export default FlexContainer;

@@ -169,6 +169,7 @@ const ProgressBar = () => {
 					alignItems: 'center',
 					justifyContent: 'center',
 					width: '100%',
+					height: '100%',
 					overflow: "visible",
 					// backgroundColor: 'black',
 				}}>
@@ -198,28 +199,22 @@ const ProgressBar = () => {
 							position: 'absolute',
 							transform: 'translateY(-00%)',
 							zIndex: 1,
+							width: '100%',
+							height: '100%',
 							
 						}}
 						>
 							<HoverImage
 							backgroundImage={your_level_details.badge.background}
 							foregroundImage={your_level_details.badge.foreground}
-							backgroundImageSize={135}
-							foregroundImageSize={100}
-
-							 
-							/>
-						</div>
-						{/* <img
-							src={your_level_details?.badge}
-							alt='level 4'
-							width={140}
-							height={140}
+							backgroundImageSize={"100%"}
+							foregroundImageSize={"80%"} />
 							
-							/> */}
+						</div>
 					</div>
 				</div>
 			</div>
+			<p>
 			{your_level_details?.level == 6 ? 
 				"You have reached the highest level. Congratulations!"
 				: (
@@ -229,14 +224,12 @@ const ProgressBar = () => {
 					fontSize: '1.2rem',
 					textAlign: 'center',
 				}}>
-					<p>
 <strong>
 
 					Next level at: {" "}
 </strong>
 					
 					{lower_is_better ? (Number(your_range_details.lower_limit) -1) : (Number(your_range_details.upper_limit)+1) || 0}
-					</p>
 				 {/* - {lower_is_better ? your_range_details.lower_limit : your_range_details.upper_limit || 0} */}
 			</span>
 			<span>
@@ -254,6 +247,7 @@ const ProgressBar = () => {
 			</span>
 				</>
 				)}
+				</p>
 			<div>
 
 				</div>

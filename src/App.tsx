@@ -3,12 +3,11 @@
 import StudentBoard from './StudentBoard/StudentBoard';
 import View from './View';
 import useStore from './zustand/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ViewSwitch from './ViewSwitch';
 import StateDisplayer from './StateDisplayer/StateDisplayer';
 import StateEditor from './StateEditor/StateEditor';
 import { exercise, range, submission } from './types';
-
 
 declare global {
 	var GLOBAL_DATA: {
@@ -28,7 +27,22 @@ declare global {
 function App() {
 	const {  calculateYourRangeDetails, setDataFromLti } = useStore(state => state)
 	const { setAllSubmissions, setExercise, setYourBestSubmission,setRanges  } = useStore(state => state);
+	const [globalData, setGlobalData] = useState(window.GLOBAL_DATA);
+
 	useEffect(() => {
+		const handleGlobalDataChange = () => {
+		  setGlobalData(window.GLOBAL_DATA);
+		};
+	  
+		window.addEventListener('GLOBAL_DATA_change', handleGlobalDataChange);
+	  
+		return () => {
+		  window.removeEventListener('GLOBAL_DATA_change', handleGlobalDataChange);
+		};
+	  }, []);
+	
+	useEffect(() => {
+		console.log("REACT GLOBAL_DATA", GLOBAL_DATA)
 		if(!GLOBAL_DATA.exercise_id) return 
 
 		if(GLOBAL_DATA.exercise){
@@ -39,7 +53,6 @@ function App() {
 		}
 		if(GLOBAL_DATA.submissions){
 			// GLOBAL_DATA.instructor && getSubmissions(GLOBAL_DATA.exercise_id);
-			console.log("Submissions", GLOBAL_DATA.submissions)
 			setAllSubmissions(GLOBAL_DATA.submissions);
 		}
 		if(GLOBAL_DATA.your_submission){
@@ -48,7 +61,7 @@ function App() {
 		}
 
 		setDataFromLti(GLOBAL_DATA as any);
-	}, [GLOBAL_DATA])
+	}, [globalData])
 
 
 	return (
@@ -57,6 +70,7 @@ function App() {
 			{
 				GLOBAL_DATA.instructor ? <ViewSwitch /> : null
 			}
+
 			<View for='teacher'>
 				<h1>
 					State manager

@@ -5,12 +5,12 @@ import { Level, exercise, range, submission, viewer_type } from '../types';
 
 import getApiData from '../utils/getApiData';
 
-import level1bkrn from '../assets/level 1 - BKRND.png';
-import level2bkrn from '../assets/level 2 - BKRND.png';
-import level3bkrn from '../assets/level 3 - BKRND.png';
-import level4bkrn from '../assets/level 4 - BKRND.png';
-import level5bkrn from '../assets/level 5 - BKRND.png';
-import level6bkrn from '../assets/level 6 - BKRND.png';
+import level1bkrn from '../assets/bk-1.png';
+import level2bkrn from '../assets/bk-2.png';
+import level3bkrn from '../assets/bk-3.png';
+import level4bkrn from '../assets/bk-4.png';
+import level5bkrn from '../assets/bk-5.png';
+import level6bkrn from '../assets/bk-6.png';
 
 import beetle from '../assets/beetle.png';
 import monkey from '../assets/monkey.png';
@@ -183,7 +183,6 @@ const useStore = create<StoreState>((set) => ({
 	},
 	// Create a function that sets me search and set the best submission
 	setAllSubmissions: (all_submissions: submission[]) => {
-		console.log("setting all submissions, ", all_submissions)
 		set({ all_submissions });
 		set({ isLoadingSubmissions: false });
 	},
@@ -191,7 +190,6 @@ const useStore = create<StoreState>((set) => ({
 		set({ levels });
 	},
 	setRanges: (ranges: range[]) => {
-		console.log("setting ranges, ", ranges)
 		set({ ranges });
 		set({ isLoadingRanges: false });
 	},
@@ -205,7 +203,6 @@ const useStore = create<StoreState>((set) => ({
 		}));
 	},
 	updateAllSubmissions: (submissions: submission[]) => {
-		console.log("updating all submissions, ", submissions)
 		set((state) => ({
 			all_submissions: state.all_submissions ?  [...state.all_submissions, ...submissions] : submissions,
 		}));
@@ -268,7 +265,6 @@ const useStore = create<StoreState>((set) => ({
 
 	getRanges: async (exercise_id: number) => {
 		// Give it a time out of 5 seconds before it gives up
-		console.log("getting ranges")
 		set({ isLoadingRanges: true });
 		const route = '/api/ranges/?exercise=' + exercise_id;
 		const data = await getApiData(route);
@@ -281,7 +277,6 @@ const useStore = create<StoreState>((set) => ({
 		}
 	},
 	getSubmissions: async (exercise_id: number) => {
-		console.log("getting submissions")
 		// Give it a time out of 5 seconds before it gives up
 		set({ isLoadingSubmissions: true });
 		const route = '/api/submissions/?exercise=' + exercise_id;
@@ -300,7 +295,6 @@ const useStore = create<StoreState>((set) => ({
 	},
 
 	getExercise: async (exercise_id: number) => {
-		console.log("getting exercise")
 		// Give it a time out of 5 seconds before it gives up
 		set({ isLoadingExercise: true });
 		const route = '/api/exercises/?exercise_id=' + exercise_id;
@@ -313,12 +307,10 @@ const useStore = create<StoreState>((set) => ({
 		}
 	},
 	getUserSubmission: async (exercise_id: string) => {
-		console.log("getting user submissions")
 		// Give it a time out of 5 seconds before it gives up
 		set({ isLoadingYourSubmission: true });
 		const route = '/api/mystats/' + exercise_id;
 		let data = await getApiData(route);
-		console.log("mystats data: ", data)
 		if (data) {
 			
 			const submissions = data.points;

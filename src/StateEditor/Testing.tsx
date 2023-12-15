@@ -3,7 +3,7 @@
 import useStore, { useNotificationStore } from '../zustand/store';
 import { ValueChanger } from '../General/ValueChanger';
 const Testing = () => {
-	const { changeUser, user_id, your_best_submission, updateYourSubmission } =
+	const { changeUser, user_id, your_best_submission, updateYourSubmission, calculateYourRangeDetails } =
 		useStore((state) => state);
 	const { setNotification, setNotificationType } = useNotificationStore(
 		(state) => state
@@ -36,6 +36,8 @@ const Testing = () => {
 		}
 
 		updateYourSubmission({ ...your_best_submission, points: newYourBestSubmission });
+		calculateYourRangeDetails();
+
 
 		setNotification('TESTING TOOLS: State updated');
 		setNotificationType('info');

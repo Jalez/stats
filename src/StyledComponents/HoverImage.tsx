@@ -4,19 +4,42 @@ import styled from 'styled-components';
 interface HoverImageProps {
   backgroundImage: string;
   foregroundImage: string;
-    backgroundImageSize?: number;
-    foregroundImageSize?: number;
+  backgroundImageSize?: number | string;
+  foregroundImageSize?: number | string;
 }
 
-const Background = styled.div`
+interface BackgroundProps {
+  image: string | undefined;
+  size?: string | number;
+}
+
+const Background = styled.div<BackgroundProps>`
   position: relative;
-  max-width: max-content;
+  background-image: url(${props => props.image});
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: ${props => props.size || '100px'};
+  width: ${props => props.size || '100px'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
-const Foreground = styled.img`
+interface ForegroundProps {
+  size?: string | number;
+}
+
+const Foreground = styled.img<ForegroundProps>`
+  position: relative;
+  height: ${props => props.size || '50px'};
+  width: ${props => props.size || '50px'};
+  object-fit: contain;
+  cursor: pointer;
   position: absolute;
   top: 50%;
   left: 50%;
+  
   transform: translate(-50%, -50%);
   transition: all 0.5s ease-in-out;
   filter: drop-shadow(0 0 0.75rem #000);
@@ -55,12 +78,16 @@ const HoverImage: React.FC<HoverImageProps> = ({ backgroundImage, foregroundImag
     return () => window.removeEventListener('resize', adjustSize);
   }, []);
 
+
   return (
-    <Background>
-      <img ref={backgroundRef} src={backgroundImage}
-       width={backgroundImageSize}
-      alt="Background" />
-      <Foreground ref={foregroundRef} src={foregroundImage} alt="Foreground" />
+    <Background
+      ref = {backgroundRef}
+      image={backgroundImage}
+      size={backgroundImageSize}
+     >
+      <Foreground ref={foregroundRef} src={foregroundImage} alt="Foreground" 
+      size={foregroundImageSize}
+      />
     </Background>
   );
 };
